@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "319e3a78-ed5c-463a-a323-fe1037f38aea": {
+      "ProjectGuid": "319e3a78-ed5c-463a-a323-fe1037f38aea",
+      "DisplayName": "Gosocket.Dian.Application",
+      "ColorIndex": 0
+    },
+    "a9e54cf2-ed1d-4844-b21c-10cfbf8edb40": {
+      "ProjectGuid": "a9e54cf2-ed1d-4844-b21c-10cfbf8edb40",
+      "DisplayName": "Gosocket.Dian.Web",
+      "ColorIndex": 1
+    },
+    "6894d337-e518-4100-a583-9c3faed6feda": {
+      "ProjectGuid": "6894d337-e518-4100-a583-9c3faed6feda",
+      "DisplayName": "Gosocket.Dian.Functions",
+      "ColorIndex": 2
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Archivos varios",
+      "ColorIndex": -1
+    },
+    "a25d6d03-fc61-4b20-8a11-145865a39b93": {
+      "ProjectGuid": "a25d6d03-fc61-4b20-8a11-145865a39b93",
+      "DisplayName": "Gosocket.Dian.IndraTestProject",
+      "ColorIndex": 3
+    },
+    "1996bc3c-8d29-453f-aaac-89bfc71b5a32": {
+      "ProjectGuid": "1996bc3c-8d29-453f-aaac-89bfc71b5a32",
+      "DisplayName": "Gosocket.Dian.Web.Services",
+      "ColorIndex": 4
+    },
+    "cbaa925a-695b-41b2-90b9-5c061a9cc30e": {
+      "ProjectGuid": "cbaa925a-695b-41b2-90b9-5c061a9cc30e",
+      "DisplayName": "Gosocket.Dian.DataContext",
+      "ColorIndex": 5
+    },
+    "fba40283-71df-4b48-8e64-663468e6e0c6": {
+      "ProjectGuid": "fba40283-71df-4b48-8e64-663468e6e0c6",
+      "DisplayName": "Gosocket.Dian.Domain",
+      "ColorIndex": 6
+    },
+    "2f8875c4-bdb5-4bf7-a667-c78ccd254343": {
+      "ProjectGuid": "2f8875c4-bdb5-4bf7-a667-c78ccd254343",
+      "DisplayName": "Gosocket.Dian.Services",
+      "ColorIndex": 7
+    },
+    "61f42a77-9c41-446b-9c1f-d3d84241bb6c": {
+      "ProjectGuid": "61f42a77-9c41-446b-9c1f-d3d84241bb6c",
+      "DisplayName": "Gosocket.Dian.Common",
+      "ColorIndex": 8
+    },
+    "72e3852a-75d8-4007-93a5-8ee16bdfb5d7": {
+      "ProjectGuid": "72e3852a-75d8-4007-93a5-8ee16bdfb5d7",
+      "DisplayName": "Gosocket.Dian.Infrastructure",
+      "ColorIndex": 9
+    },
+    "3d6cd11f-a39b-427e-acea-9f07ea2a78f4": {
+      "ProjectGuid": "3d6cd11f-a39b-427e-acea-9f07ea2a78f4",
+      "DisplayName": "Web",
+      "ColorIndex": 10
+    },
+    "d09eb261-6bcc-47c4-9ca0-38126a7d22ed": {
+      "ProjectGuid": "d09eb261-6bcc-47c4-9ca0-38126a7d22ed",
+      "DisplayName": "Gosocket.Dian.Plugin.Functions",
+      "ColorIndex": 11
+    }
+  },
+  "NextColorIndex": 12
+}

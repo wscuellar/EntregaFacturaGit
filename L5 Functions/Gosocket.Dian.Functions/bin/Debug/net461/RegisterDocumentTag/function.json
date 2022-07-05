@@ -1,0 +1,15 @@
+{
+  "generatedBy": "Microsoft.NET.Sdk.Functions-1.0.14",
+  "configurationSource": "attributes",
+  "bindings": [
+    {
+      "type": "queueTrigger",
+      "connection": "GlobalStorage",
+      "queueName": "global-document-tag-input%Slot%",
+      "name": "myQueueItem"
+    }
+  ],
+  "disabled": false,
+  "scriptFile": "../bin/Gosocket.Dian.Functions.dll",
+  "entryPoint": "Gosocket.Dian.Functions.Cosmos.RegisterDocumentTag.Run"
+}

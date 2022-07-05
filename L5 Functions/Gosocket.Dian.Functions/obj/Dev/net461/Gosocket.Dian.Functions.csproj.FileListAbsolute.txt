@@ -1,0 +1,4 @@
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L5 Functions\Gosocket.Dian.Functions\obj\Dev\net461\Gosocket.Dian.Functions.csprojAssemblyReference.cache
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L5 Functions\Gosocket.Dian.Functions\obj\Dev\net461\Gosocket.Dian.Functions.csproj.CoreCompileInputs.cache
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L5 Functions\Gosocket.Dian.Functions\obj\Dev\net461\Gosocket.Dian.Functions.AssemblyInfoInputs.cache
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L5 Functions\Gosocket.Dian.Functions\obj\Dev\net461\Gosocket.Dian.Functions.AssemblyInfo.cs

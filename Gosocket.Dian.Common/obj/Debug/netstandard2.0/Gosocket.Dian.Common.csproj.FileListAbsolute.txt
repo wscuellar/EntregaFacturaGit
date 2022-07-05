@@ -1,0 +1,11 @@
+C:\Users\USUARIO\Source\Repos\EntregaFactura\Gosocket.Dian.Common\bin\Debug\netstandard2.0\Gosocket.Dian.Common.deps.json
+C:\Users\USUARIO\Source\Repos\EntregaFactura\Gosocket.Dian.Common\bin\Debug\netstandard2.0\Gosocket.Dian.Common.dll
+C:\Users\USUARIO\Source\Repos\EntregaFactura\Gosocket.Dian.Common\bin\Debug\netstandard2.0\Gosocket.Dian.Common.pdb
+C:\Users\USUARIO\Source\Repos\EntregaFactura\Gosocket.Dian.Common\obj\Debug\netstandard2.0\Gosocket.Dian.Common.csprojAssemblyReference.cache
+C:\Users\USUARIO\Source\Repos\EntregaFactura\Gosocket.Dian.Common\obj\Debug\netstandard2.0\Gosocket.Dian.Common.Resources.TextResources.resources
+C:\Users\USUARIO\Source\Repos\EntregaFactura\Gosocket.Dian.Common\obj\Debug\netstandard2.0\Gosocket.Dian.Common.csproj.GenerateResource.cache
+C:\Users\USUARIO\Source\Repos\EntregaFactura\Gosocket.Dian.Common\obj\Debug\netstandard2.0\Gosocket.Dian.Common.csproj.CoreCompileInputs.cache
+C:\Users\USUARIO\Source\Repos\EntregaFactura\Gosocket.Dian.Common\obj\Debug\netstandard2.0\Gosocket.Dian.Common.AssemblyInfoInputs.cache
+C:\Users\USUARIO\Source\Repos\EntregaFactura\Gosocket.Dian.Common\obj\Debug\netstandard2.0\Gosocket.Dian.Common.AssemblyInfo.cs
+C:\Users\USUARIO\Source\Repos\EntregaFactura\Gosocket.Dian.Common\obj\Debug\netstandard2.0\Gosocket.Dian.Common.dll
+C:\Users\USUARIO\Source\Repos\EntregaFactura\Gosocket.Dian.Common\obj\Debug\netstandard2.0\Gosocket.Dian.Common.pdb

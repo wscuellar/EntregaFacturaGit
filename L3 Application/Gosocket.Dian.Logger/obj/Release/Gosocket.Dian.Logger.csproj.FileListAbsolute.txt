@@ -1,0 +1,11 @@
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L3 Application\Gosocket.Dian.Logger\bin\Release\Gosocket.Dian.Logger.dll
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L3 Application\Gosocket.Dian.Logger\bin\Release\Gosocket.Dian.Logger.pdb
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L3 Application\Gosocket.Dian.Logger\bin\Release\Microsoft.ApplicationInsights.dll
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L3 Application\Gosocket.Dian.Logger\bin\Release\System.Diagnostics.DiagnosticSource.dll
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L3 Application\Gosocket.Dian.Logger\bin\Release\Microsoft.ApplicationInsights.xml
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L3 Application\Gosocket.Dian.Logger\bin\Release\System.Diagnostics.DiagnosticSource.xml
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L3 Application\Gosocket.Dian.Logger\obj\Release\Gosocket.Dian.Logger.csproj.CoreCompileInputs.cache
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L3 Application\Gosocket.Dian.Logger\obj\Release\Gosocket.Dian.Logger.csproj.CopyComplete
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L3 Application\Gosocket.Dian.Logger\obj\Release\Gosocket.Dian.Logger.dll
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L3 Application\Gosocket.Dian.Logger\obj\Release\Gosocket.Dian.Logger.pdb
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L3 Application\Gosocket.Dian.Logger\obj\Release\Gosocket.Dian.Logger.csproj.AssemblyReference.cache

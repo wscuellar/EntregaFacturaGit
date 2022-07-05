@@ -1,0 +1,2 @@
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L2 Domain\Gosocket.Dian.Domain\obj\Dev\Gosocket.Dian.Domain.csprojAssemblyReference.cache
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L2 Domain\Gosocket.Dian.Domain\obj\Dev\Gosocket.Dian.Domain.csproj.CoreCompileInputs.cache

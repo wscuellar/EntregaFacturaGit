@@ -1,0 +1,169 @@
+{
+  "runtimeTarget": {
+    "name": ".NETStandard,Version=v2.0/",
+    "signature": "cfe1dc2a80602aef150a12815387068463a61a0d"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETStandard,Version=v2.0": {},
+    ".NETStandard,Version=v2.0/": {
+      "Gosocket.Dian.Interfaces/1.0.0": {
+        "dependencies": {
+          "Gosocket.Dian.Domain": "1.0.0",
+          "NETStandard.Library": "2.0.3"
+        },
+        "runtime": {
+          "Gosocket.Dian.Interfaces.dll": {}
+        }
+      },
+      "Microsoft.NETCore.Platforms/1.1.0": {},
+      "NETStandard.Library/2.0.3": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0"
+        }
+      },
+      "Gosocket.Dian.Common/1.0.0": {
+        "runtime": {
+          "Gosocket.Dian.Common.dll": {}
+        }
+      },
+      "Gosocket.Dian.Domain/1.0.0": {
+        "dependencies": {
+          "Gosocket.Dian.Common": "1.0.0",
+          "Microsoft.WindowsAzure.Storage": "8.7.0.0",
+          "Rebex.Mail": "2.0.6821.0",
+          "System.Net.Http.Formatting": "5.2.3.0",
+          "Newtonsoft.Json": "11.0.0.0",
+          "Microsoft.Azure.Documents.Client": "2.2.0.0",
+          "System.Web.Http": "5.2.3.0",
+          "Rebex.Common": "2.5.6821.0"
+        },
+        "runtime": {
+          "Gosocket.Dian.Domain.dll": {}
+        }
+      },
+      "Microsoft.WindowsAzure.Storage.Reference/8.7.0.0": {
+        "runtime": {
+          "Microsoft.WindowsAzure.Storage.dll": {
+            "assemblyVersion": "8.7.0.0",
+            "fileVersion": "8.7.0.0"
+          }
+        }
+      },
+      "Rebex.Mail.Reference/2.0.6821.0": {
+        "runtime": {
+          "Rebex.Mail.dll": {
+            "assemblyVersion": "2.0.6821.0",
+            "fileVersion": "2.0.6821.0"
+          }
+        }
+      },
+      "System.Net.Http.Formatting.Reference/5.2.3.0": {
+        "runtime": {
+          "System.Net.Http.Formatting.dll": {
+            "assemblyVersion": "5.2.3.0",
+            "fileVersion": "5.2.30128.0"
+          }
+        }
+      },
+      "Newtonsoft.Json.Reference/11.0.0.0": {
+        "runtime": {
+          "Newtonsoft.Json.dll": {
+            "assemblyVersion": "11.0.0.0",
+            "fileVersion": "11.0.2.21924"
+          }
+        }
+      },
+      "Microsoft.Azure.Documents.Client.Reference/2.2.0.0": {
+        "runtime": {
+          "Microsoft.Azure.Documents.Client.dll": {
+            "assemblyVersion": "2.2.0.0",
+            "fileVersion": "2.2.0.0"
+          }
+        }
+      },
+      "System.Web.Http.Reference/5.2.3.0": {
+        "runtime": {
+          "System.Web.Http.dll": {
+            "assemblyVersion": "5.2.3.0",
+            "fileVersion": "5.2.30128.0"
+          }
+        }
+      },
+      "Rebex.Common.Reference/2.5.6821.0": {
+        "runtime": {
+          "Rebex.Common.dll": {
+            "assemblyVersion": "2.5.6821.0",
+            "fileVersion": "2.5.6821.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Gosocket.Dian.Interfaces/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.NETCore.Platforms/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
+      "path": "microsoft.netcore.platforms/1.1.0",
+      "hashPath": "microsoft.netcore.platforms.1.1.0.nupkg.sha512"
+    },
+    "NETStandard.Library/2.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-st47PosZSHrjECdjeIzZQbzivYBJFv6P2nv4cj2ypdI204DO+vZ7l5raGMiX4eXMJ53RfOIg+/s4DHVZ54Nu2A==",
+      "path": "netstandard.library/2.0.3",
+      "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
+    },
+    "Gosocket.Dian.Common/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Gosocket.Dian.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.WindowsAzure.Storage.Reference/8.7.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Rebex.Mail.Reference/2.0.6821.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Net.Http.Formatting.Reference/5.2.3.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Newtonsoft.Json.Reference/11.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Azure.Documents.Client.Reference/2.2.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Web.Http.Reference/5.2.3.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Rebex.Common.Reference/2.5.6821.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,2 @@
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L1 Data\Gosocket.Dian.DataContext\obj\Release\Gosocket.Dian.DataContext.csprojAssemblyReference.cache
+C:\Users\USUARIO\Source\Repos\EntregaFactura\L1 Data\Gosocket.Dian.DataContext\obj\Release\Gosocket.Dian.DataContext.csproj.CoreCompileInputs.cache
