@@ -1,0 +1,170 @@
+﻿@using Gosocket.Dian.Web.Common;
+@model Gosocket.Dian.Web.Models.PayrollViewModel
+
+@{
+    ViewBag.Title = "Consultar Nomina";
+}
+
+@section css
+{
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <link href="~/Content/plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
+    <link href="~/Content/plugins/chosen/chosen.min.css" rel="stylesheet">
+}
+
+<div class="page-content margin-15">
+    <div class="row margin-horizontal-0">
+        <div class="tab-base">
+            <!--Tabs Content-->
+            <div class="tab-content padding-0">
+                <div id="tab-current-country" class="tab-pane fade active in">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">@ViewBag.Title</h3>
+                        </div>
+
+                        <div class="panel-body padding-top-20">
+                            <div class="pad-btm padding-bottom-0">
+                                <div class="row margin-horizontal-0">
+                                    @using (Html.BeginForm("ExportPDF", "Document", FormMethod.Post, new { id = "export-form" }))
+                                    {
+                                        @* @Html.AntiForgeryToken()*@
+
+                                    <div class="row margin-horizontal-0 margin-bottom-10" style="margin-left:5px; margin-right:5px;">
+                                        <div class="col-md-12 padding-horizontal-0">
+                                            <div id="document-list" class="panel panel-bordered-dian">
+
+                                                <div class="panel-body padding-20 padding-bottom-0">
+                                                    <div class="row">
+
+                                                        <div class="col-sm-3 padding-xs-0">
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(m => m.CUNE, new { @class = "control-label" })
+                                                                @Html.TextBoxFor(m => m.CUNE, new Dictionary<string, object> { { "class", "form-control" }, { "placeholder", @Html.DisplayNameFor(model => model.CUNE) } })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 padding-xs-0">
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(m => m.MesesValidacion, new { @class = "control-label" })
+                                                                @Html.DropDownListFor(m => m.MesValidacion, new SelectList(Model.MesesValidacion, "Code", "Name", Model.MesValidacion), new { @class = "form-control selectpicker" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-3 padding-xs-0">
+                                                            <div class="form-group">
+                                                                <label class="control-label">Rango de Numeracion</label>
+                                                                <div class="row">
+                                                                    <div class="btn btn-default col-sm-12" id="export-range">
+                                                                        @Html.LabelFor(m => m.RangoNumeracionMenor, new { @class = "control-label" })
+                                                                        @Html.TextBoxFor(m => m.RangoNumeracionMenor, new Dictionary<string, object> { { "class", "form-control" }, { "placeholder", @Html.DisplayNameFor(model => model.RangoNumeracionMenor) } })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 padding-xs-0">
+                                                            <div class="form-group">
+                                                                <label style="color:#ffffff;" class="control-label">Rango de Numeracion</label>
+                                                                <div class="row">
+                                                                    <div class="btn btn-default col-sm-12" id="export-range">
+                                                                        @Html.LabelFor(m => m.RangoNumeracionMayor, new { @class = "control-label" })
+                                                                        @Html.TextBoxFor(m => m.RangoNumeracionMayor, new Dictionary<string, object> { { "class", "form-control" }, { "placeholder", @Html.DisplayNameFor(model => model.RangoNumeracionMayor) } })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="panel-body padding-20 padding-bottom-0">
+                                                    <div class="row">
+                                                        <div class="col-sm-3 padding-xs-0">
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(m => m.TipoDocumento, new { @class = "control-label" })
+                                                                @Html.DropDownListFor(m => m.TipoDocumento, new SelectList(Model.TiposDocumento, "Code", "Name", Model.TipoDocumento), new { @class = "form-control selectpicker" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 padding-xs-0">
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(m => m.NumeroDocumento, new { @class = "control-label" })
+                                                                @Html.TextBoxFor(m => m.NumeroDocumento, new Dictionary<string, object> { { "class", "form-control" }, { "placeholder", @Html.DisplayNameFor(model => model.NumeroDocumento) } })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 padding-xs-0">
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(m => m.LetraPrimerApellido, new { @class = "control-label" })
+                                                                @Html.DropDownListFor(m => m.LetraPrimerApellido, new SelectList(Model.LetrasPrimerApellido, "Code", "Name", Model.LetraPrimerApellido), new { @class = "form-control selectpicker" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 padding-xs-0">
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(m => m.RangoSalarial, new { @class = "control-label" })
+                                                                @Html.DropDownListFor(m => m.RangoSalarial, new SelectList(Model.RangosSalarial, "Code", "Name", Model.RangoSalarial), new { @class = "form-control selectpicker" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel-body padding-20 padding-bottom-0">
+                                                    <div class="row">
+                                                        <div class="col-sm-3 padding-xs-0">
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(m => m.Ciudad, new { @class = "control-label" })
+                                                                @Html.DropDownListFor(m => m.Ciudad, new SelectList(Model.Ciudades, "Code", "Name", Model.Ciudad), new { @class = "form-control selectpicker" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 padding-xs-0">
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(m => m.Ordenar, new { @class = "control-label" })
+                                                                @Html.DropDownListFor(m => m.Ordenar, new SelectList(Model.Ordenadores, "Code", "Name", Model.Ordenar), new { @class = "form-control selectpicker" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @if (!String.IsNullOrEmpty(Model.Mensaje))
+                                                {
+                                                    <div class="panel-body padding-20 padding-bottom-0">
+                                                        <div class="row" style="color:#FF0000;">
+                                                            @Model.Mensaje
+                                                        </div>
+                                                    </div>
+                                                }
+                                                <div class="panel-body padding-20 padding-bottom-0">
+                                                    <div class="row">
+
+                                                        <div class="panel-footer-grey text-right submit-container">
+                                                            <button type="submit" class="btn btn-success btn-radian-success">Buscar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                    </div>
+                                                </div>
+                                    }
+
+                                </div>
+                            </div>
+
+                            @Html.Partial("_payrolls")
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @section Scripts {
+            @Scripts.Render("~/bundles/jqueryval")
+
+            <!--Bootstrap Select [ OPTIONAL ]-->
+            <script src="~/Content/plugins/bootstrap-select/bootstrap-select.min.js"></script>
+
+            <script src="~/Content/js/bootstrap-filestyle.min.js"></script>
+            <script src="~/Content/js/file-validator.js"></script>
+
+            <script>
+
+                            </script>
+
+                            }

@@ -1,0 +1,459 @@
+﻿@model Gosocket.Dian.Web.Models.SearchDocumentViewModel
+
+@{
+    ViewBag.Title = "Consultar documentos " + $" {ViewBag.ViewTypeSpanish}";
+    var view = ViewBag.ViewType;
+
+    var columnSize = 3;
+    if (view == "Index" || view == "Provider")
+    {
+        columnSize = 3;
+    }
+}
+
+@section css
+{
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <link href="~/Content/plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
+    <link href="~/Content/plugins/chosen/chosen.min.css" rel="stylesheet">
+}
+
+<style>
+    .form-control {
+        border-radius: 4px;
+        height: 43px !important;
+        border: 1px solid #CCCCCC;
+    }
+
+    .btn-default {
+        border-radius: 4px;
+        height: 43px !important;
+        padding-top: 12px;
+        padding-left: 0px !important;
+    }
+
+    .title-container {
+        margin-bottom: 50px !important;
+        margin-top: 30px !important;
+    }
+
+    .select-container {
+        padding-left: 10px !important;
+    }
+
+    .submit-container {
+        margin-top: 8px;
+        padding-top: 24px;
+        padding-bottom: 20px;
+    }
+
+    .bootstrap-select button {
+        padding-left: 10px !important;
+    }
+</style>
+
+<div class="page-content margin-15">
+
+
+
+
+
+
+
+
+
+    <div class="tab-base" id="panel-form" data-target="#panel-form" data-toggle="panel-overlay">
+
+        <div class="row margin-horizontal-0">
+            <div class="tab-base">
+                <!--Tabs Content-->
+                <div class="tab-content transparency" style="padding:0px !important;">
+                    <div id="tab-current-country" class="tab-pane fade active in">
+                        <div class="panel" id="panel-form1" data-target="#panel-form1" data-toggle="panel-overlay" style="background-color: #ffffff00;">
+                            <div class="panel-body" style="padding:0px !important;">
+                                <div class="pad-btm padding-bottom-0">
+                                    <div class="row margin-horizontal-0">
+                                        @{ string action = ViewBag.ViewType; }
+                                        @using (Html.BeginForm(action, "Document", FormMethod.Post, new { id = "documents-form" }))
+                                        {
+                                            @Html.HiddenFor(m => m.Page)
+                                            <input id="startDate" name="StartDate" type="hidden" value="@Model.StartDate" />
+                                            <input id="endDate" name="EndDate" type="hidden" value="@Model.EndDate" />
+                                            <div class="row margin-horizontal-0 margin-bottom-10" style="margin-left:5px; margin-right:5px;">
+                                                <div class="col-md-12 padding-horizontal-0">
+                                                    <div id="document-list" class="panel panel-bordered-dian">
+
+                                                        <div class="panel-body padding-20">
+                                                            <div id="divFirstRowDocFilter" class="row">
+                                                                <div class="col-sm-@columnSize padding-xs-0">
+                                                                    <div class="form-group">
+                                                                        @Html.LabelFor(m => m.DocumentKey, new { @class = "control-label" })
+                                                                        @Html.TextBoxFor(m => m.DocumentKey, new Dictionary<string, object> { { "class", "form-control" }, { "placeholder", @Html.DisplayNameFor(model => model.DocumentKey) } })
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-3 padding-xs-0">
+                                                                    <div class="form-group">
+                                                                        @Html.LabelFor(m => m.SerieAndNumber, new { @class = "control-label" })
+                                                                        @Html.TextBoxFor(m => m.SerieAndNumber, new Dictionary<string, object> { { "class", "form-control" }, { "placeholder", @Html.DisplayNameFor(model => model.SerieAndNumber) } })
+                                                                    </div>
+                                                                </div>
+
+                                                                @if (ViewBag.ViewType != "Sent")
+                                                                {
+                                                                    <div class="col-sm-3 padding-xs-0">
+                                                                        <div class="form-group">
+                                                                            @Html.LabelFor(m => m.SenderCode, new { @class = "control-label" })
+                                                                            @Html.TextBoxFor(m => m.SenderCode, new Dictionary<string, object> { { "class", "form-control" }, { "placeholder", @Html.DisplayNameFor(model => model.SenderCode) } })
+                                                                        </div>
+                                                                    </div>
+                                                                }
+
+                                                                @if (ViewBag.ViewType != "Received")
+                                                                {
+                                                                    <div class="col-sm-3 padding-xs-0">
+                                                                        <div class="form-group">
+                                                                            @Html.LabelFor(m => m.ReceiverCode, new { @class = "control-label" })
+                                                                            @Html.TextBoxFor(m => m.ReceiverCode, new Dictionary<string, object> { { "class", "form-control" }, { "placeholder", @Html.DisplayNameFor(model => model.ReceiverCode) } })
+                                                                        </div>
+                                                                    </div>
+                                                                }
+
+                                                                <div class="col-sm-3 padding-xs-0">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label">Rango de fechas</label>
+                                                                        <div class="input-group double-calendar">
+                                                                            <span id="action-left" class="input-group-addon">
+                                                                                <i class="fa fa-chevron-left"></i>
+                                                                            </span>
+                                                                            <input type="text" class="form-control" id="dashboard-report-range" placeholder="Ejm: 01-01-2020 - 01-03-2021">
+                                                                            <span id="action-right" class="input-group-addon">
+                                                                                <i class="fa fa-chevron-right"></i>
+                                                                            </span>
+                                                                        </div>
+                                                                        @*<div class="form-group">
+                                                                            <div class="btn btn-default col-sm-12" id="dashboard-report-range">
+                                                                                <i class="icon-calendar"></i>&nbsp;
+                                                                                <span class="thin uppercase hidden-xs"></span>&nbsp;
+                                                                                <i class="fa fa-angle-down"></i>
+                                                                            </div>
+                                                                        </div>*@
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="row">
+                                                                <div class="col-sm-3 padding-xs-0">
+                                                                    <div class="form-group">
+                                                                        @Html.LabelFor(m => m.DocumentTypeId, new { @class = "control-label" })
+                                                                        @Html.DropDownListFor(m => m.DocumentTypeId, new SelectList(Model.DocumentTypes, "Code", "Name", Model.DocumentTypeId), new { @class = "form-control selectpicker" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3 padding-xs-0">
+                                                                    <div class="form-group">
+                                                                        @Html.LabelFor(m => m.Statuses, new { @class = "control-label" })
+                                                                        @Html.DropDownListFor(m => m.Status, new SelectList(Model.Statuses, "Code", "Name", Model.Status), new { @class = "form-control selectpicker" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3 padding-xs-0">
+                                                                    <div class="form-group">
+                                                                        @Html.LabelFor(m => m.RadianStatusList, new { @class = "control-label" })
+                                                                        @Html.DropDownListFor(m => m.RadianStatus, new SelectList(Model.RadianStatusList, "Code", "Name", Model.RadianStatus), new { @class = "form-control selectpicker" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3 padding-xs-0">
+                                                                    <div class="form-group">
+                                                                        @Html.LabelFor(m => m.ReferencesType, new { @class = "control-label" })
+                                                                        @Html.DropDownListFor(m => m.ReferencesType, new SelectList(Model.DocumentTypes.Where(d => new List<string> { "00", "07", "08" }.Contains(d.Code)), "Code", "Name", Model.ReferencesType), new { @class = "form-control selectpicker" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="panel-footer-grey text-center submit-container">
+                                                            <button type="submit" class="btn btn-success btn-radian-success">Buscar</button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </div>
+                                </div>
+
+                                @Html.Partial("_documents");
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <script src="~/Content/plugins/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="~/Content/js/bootstrap-filestyle.min.js"></script>
+    <script src="~/Content/js/file-validator.js"></script>
+    <script src="~/Content/js/Radian/RadianPrintDocumentPdf.js"></script>
+    <script src="~/Content/js/Radian/RadianIndex.js"></script>
+
+    <script>
+        var startDate;
+        var endDate;
+
+        function showModal(cude) {
+          //  showPdfModal("#show-supportdocument", cude, '@Url.Action("PrintSupportDocument", "Document")', '#panel-form');
+        }
+
+
+
+        $(document).ready(function () {
+
+            $('input.check').on('change', function () {
+                $('input.check').not(this).prop('checked', false).parent().removeClass('active');
+            });
+
+            $('.document-row').click('onClick', function () {
+                var id = $(this).context.getAttribute('data-id');
+                var partitionKey = $(this).context.getAttribute('data-partitionKey');
+                var documentType = $(this).context.getAttribute('data-type');
+                if (documentType != "101" && documentType != "12") //ignora documento exportacion
+                {
+                    showLoading('#panel-form', 'Cargando', 'Cargando datos, por favor espere.');
+                    window.location.href = "/Document/Details?trackId=" + id + "&partitionKey=" + partitionKey;
+                }
+            });
+
+            $(".download-document").click(function(){
+                var cufe = this.id;
+                window.location.href = "/Document/DownloadZipFiles?trackId=" + cufe;
+            })
+
+            $(".download-eventos").click(function () {
+                
+                var cufe = this.id;
+                var fecha = $(this).context.getAttribute('code');
+                var code = $(this).context.getAttribute('data-id');
+                window.location.href = "/Document/DownloadZipFilesEventos?trackId=" + cufe + "&code=" + code + "&fecha=" + fecha;
+            })
+
+            $(".download-equivalente-document").click(function () {
+                var cufe = this.id;
+                var typeId = $(this).context.getAttribute('documenTypeId');
+                var emissionDate = $(this).context.getAttribute('EmissionDate');
+                var generationDate = $(this).context.getAttribute('GenerationDate');
+                window.location.href = "/Document/DownloadZipFilesEquivalente?trackId=" + cufe + "&documentTypeId=" + typeId + "&FechaValidacionDIAN=" + emissionDate + "&FechaGeneracionDIAN=" + generationDate;
+            })
+
+            $(".download-support-document").click(function () {
+                var cufe = this.id;
+                var element = '#' +cufe;
+                showPdfModalClick(cufe, '@Url.Action("PrintSupportDocument", "Document")', '#panel-form1');
+            })
+
+            $('.download-files').click('onClick', function () {
+                downloadFiles(this);
+            });
+
+            $('.btn-search').click(function () {
+                $('#Page').val(0);
+                $(this).attr('disabled', 'disabled');
+                $(this).html('<i class="fa fa-circle-o-notch fa-spin"></i> Buscando...');
+                $('.table-pagination').css('display', 'none');
+                $('.table-responsive').css('display', 'none');
+                $('#documents-form').submit();
+            });
+
+            // Pagination
+            $('.next-page').click(function () {
+                $('#Page').val(@Model.Page + 1);
+                $('#documents-form').submit();
+            });
+
+            $('.prev-page').click(function () {
+                $('#Page').val(@Model.Page - 1);
+                $('#documents-form').submit();
+            });
+            // Pagination
+
+            //Set radian status circle styles
+            $(".radian-status-circle").each(
+                function () {
+                    if ($(this).parent().text().trim() == "TÍTULO VALOR") {
+                        $(this).css("color", "#C67BBE");
+                    }
+                    else if ($(this).parent().text().trim() == "PAGADA") {
+                        $(this).css("color", "#51B5D3");
+                    }
+                    else if ($(this).parent().text().trim() == "REGISTRADA") {
+                        $(this).css("color", "#62C6AB");
+                    }
+                    else if ($(this).parent().text().trim() == "ENDOSADA") {
+                        $(this).css("color", "#F8D630");
+                    }
+                    else if ($(this).parent().text().trim() == "LIMITADA") {
+                        $(this).css("color", "#8ED476");
+                    }
+                    else {
+                        $(this).css("color", "#8ED476");
+                    }
+                }
+            );
+            //Set radian status circle styles
+
+            //Resizing document filters
+            if ($('#divFirstRowDocFilter').children().length == 5) {
+                $('#divFirstRowDocFilter').children().eq(1).removeClass('col-sm-3');
+                $('#divFirstRowDocFilter').children().eq(1).addClass('col-sm-2');
+                $('#divFirstRowDocFilter').children().eq(2).removeClass('col-sm-3');
+                $('#divFirstRowDocFilter').children().eq(2).addClass('col-sm-2');
+                $('#divFirstRowDocFilter').children().eq(3).removeClass('col-sm-3');
+                $('#divFirstRowDocFilter').children().eq(3).addClass('col-sm-2');
+            }
+            //Resizing document filters
+        });
+
+        startDate = moment("@Model.StartDate.ToString("yyyy-MM-dd")");
+        endDate = moment("@Model.EndDate.ToString("yyyy-MM-dd")");
+
+        startDate.locale('es');
+        endDate.locale('es');
+
+        $('#dashboard-report-range').daterangepicker({
+            /*"buttonClasses": "btn btn-block btn-default",*/
+            "startDate": startDate,
+            "endDate": endDate,
+            "maxDate": moment().endOf('month'),
+            //"applyClass": "btn-hover-gosocket",
+            //"cancelClass": "btn-hover-gosocket",
+            //"ranges": {
+            //    'Últimos 7 Días': [moment().subtract('days', 6), moment()],
+            //    'Mes actual': [moment().startOf('month'), moment().endOf('month')],
+            //    'Mes Anterior': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
+            //    'Últimos 3 Meses': [moment().subtract('month', 3).startOf('month'), moment().endOf('month')]
+            //},
+            "locale": {
+                "format": "YYYY/MM/DD",
+                "separator": " - ",
+                "applyLabel": "Aceptar",
+                "cancelLabel": "Cancelar",
+                "fromLabel": "Desde",
+                "toLabel": "Hasta",
+                "customRangeLabel": "Rango de Fechas",
+                "daysOfWeek": [
+                    "Do",
+                    "Lu",
+                    "Ma",
+                    "Mi",
+                    "Ju",
+                    "Vi",
+                    "Sa"
+                ],
+                "monthNames": [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ],
+                "firstDay": 1
+            },
+            opens: ('left'),
+        }, function (start, end, label) {
+            //$('#dashboard-report-range span').html(capitalizeMonth(start.format('YYYY/MM/DD')) + ' al ' + capitalizeMonth(end.format('YYYY/MM/DD')));
+            startDate = start;
+            endDate = end;
+            $('#startDate').val(startDate.format('YYYY/MM/DD'));
+            $('#endDate').val(endDate.format('YYYY/MM/DD'));
+        });
+        $('#dashboard-report-range span').html(capitalizeMonth(startDate.format('YYYY/MM/DD')) + ' al ' + capitalizeMonth(endDate.format('YYYY/MM/DD')));
+        $('#dashboard-report-range').show();
+
+        $(".double-calendar").find("#action-left").click(function () {
+            const actualStartDate = moment($("#startDate").val()),
+                actualEndDate = moment($("#endDate").val()),
+                prevStartDate = actualStartDate.add(-1, "days"),
+                nextEndDate = actualEndDate.add(-1, "days");
+
+            $("#dashboard-report-range").data('daterangepicker').setStartDate(prevStartDate);
+            $("#dashboard-report-range").data('daterangepicker').setEndDate(nextEndDate);
+            $("#startDate").val(prevStartDate.format('YYYY/MM/DD'));
+            $("#endDate").val(nextEndDate.format('YYYY/MM/DD'));
+        })
+        $(".double-calendar").find("#action-right").click(function () {
+            const actualStartDate = moment($("#startDate").val()),
+                actualEndDate = moment($("#endDate").val()),
+                prevStartDate = actualStartDate.add(1, "days"),
+                nextEndDate = actualEndDate.add(1, "days");
+
+            $("#dashboard-report-range").data('daterangepicker').setStartDate(prevStartDate);
+            $("#dashboard-report-range").data('daterangepicker').setEndDate(nextEndDate);
+            $("#startDate").val(prevStartDate.format('YYYY/MM/DD'));
+            $("#endDate").val(nextEndDate.format('YYYY/MM/DD'));
+        })
+
+        function capitalizeMonth(date) {
+            return date.substring(0,3) + date.charAt(3).toUpperCase() + date.slice(4);
+        }
+
+        function downloadFiles(span) {
+            $(span).parent().parent().addClass('not-redirect');
+            var id = span.id;
+            if ($(span).hasClass("fa-download")) {
+                $(span).removeClass("fa-download");
+                $(span).addClass("fa-spinner");
+                setTimeout(function () {
+                    $("#" + id).removeClass("fa-spinner");
+                    $("#" + id).addClass("fa-download");
+                }, 5000);
+                window.location.href = "/Document/DownloadZipFiles?trackId=" + id;
+
+            }
+        }
+
+        $(document).on('mouseenter', ".iffyTip", function () {
+            var $this = $(this);
+            if (this.offsetWidth < this.scrollWidth && !$this.attr('title')) {
+            }
+        });
+        $('.hideText').css('width', $('.hideText').parent().width());
+
+
+        $("#RadianStatus").change(function () {
+            var radianStatusValue = parseInt($("#RadianStatus option:selected").val(), 10);
+
+            if (radianStatusValue >= 0 && radianStatusValue < 9) {
+                var documentTypeId = $("#DocumentTypeId").val();
+
+                if (documentTypeId == "00") {
+                    $("#DocumentTypeId").val("01");
+                    $("#DocumentTypeId").parent().find("button").find("span").first()
+                        .text($("#DocumentTypeId option:selected").text());
+                }
+            }
+            else if (radianStatusValue == 9) {
+                $("#DocumentTypeId").val("00");
+                $("#DocumentTypeId").parent().find("button").find("span").first()
+                    .text($("#DocumentTypeId option:selected").text());
+            }
+        });
+
+    </script>
+
+}
+

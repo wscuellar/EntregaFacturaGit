@@ -1,0 +1,28 @@
+﻿@using Gosocket.Dian.Web.Models
+@model UserLoginViewModel
+@{
+    var defaultHtmlAttr = new Dictionary<string, object> { { "class", "form-control" }, { "placeholder", "Ingrese el código CUFE o UUID" }, { "autofocus", "" }, { "autocomplete", "off" } };
+}
+<div class="bhoechie-tab-content active">
+    <span class="sub-title">Buscar documento</span>
+    <p class="mt-28">Por favor diligencia los siguientes datos:</p>
+
+    <form id="search-document-form" method="post" action="@Url.Action("SearchDocument","User")" style="margin-top: 20px;">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(x => x.RecaptchaToken, new { @class = "RecaptchaToken" })
+        <div class="form-group">
+            @Html.LabelFor(t => t.DocumentKey, new { @class = "control-label" })
+            @Html.TextBoxFor(m => m.DocumentKey, defaultHtmlAttr)
+            @Html.ValidationMessageFor(m => m.DocumentKey, "", new { @class = "" })
+        </div>
+
+        <button class="btn btn-primary search-document margin-top-40">
+            Buscar
+        </button>
+    </form>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}

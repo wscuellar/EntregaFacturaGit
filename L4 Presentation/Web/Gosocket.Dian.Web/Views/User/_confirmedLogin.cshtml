@@ -1,0 +1,20 @@
+﻿@using Gosocket.Dian.Infrastructure
+<div class="dian-alert dian-alert-info" style="margin-top:10%;margin-bottom: 50%;">
+    <i class="fa fa-info-circle" style="margin-right: 15px;"></i>
+    @if (ConfigurationManager.GetValue("Environment") == "Hab" || ConfigurationManager.GetValue("Environment") == "Prod")
+    {
+        <p>
+            Se ha enviado la ruta de acceso al correo <strong>@ViewBag.UserEmail</strong> registrado en el RUT de la persona natural que se autenticó en el sistema.
+            <br />
+            <strong>El acceso estará disponible por 60 minutos.</strong>
+        </p>
+    }
+
+    @if (ConfigurationManager.GetValue("Environment") == "Dev" || ConfigurationManager.GetValue("Environment") == "Local" || ConfigurationManager.GetValue("Environment") == "Test")
+    {
+        <p>
+            Acceso directo para ambiente de pruebas <br>
+            <a href="@ViewBag.Url">Clic para entrar</a>
+        </p>
+    }
+</div>

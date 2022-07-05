@@ -1,0 +1,104 @@
+﻿@model Gosocket.Dian.Web.Models.OthersElectronicDocAssociatedViewModel
+@using Newtonsoft.Json;
+@{var defaultHtmlAttr = new Dictionary<string, object> { { "class", "form-control input-general" }, { "readonly", "true" } };}
+@{
+    ViewBag.Title = "Detalle del SET de pruebas " + ViewBag.EquivalentElectronicDocumentName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int? equivalentDocumentId = ViewBag?.EquivalentDocumentId;
+}
+
+
+@section css
+{
+    <style type="text/css">
+        .setTestODE {
+            padding: 0px 20px 20px 30px;
+            box-sizing: border-box;
+            border-radius: 0px 5px 0px 0px;
+            margin-top: 20px;
+        }
+
+        hr {
+            margin-top: 20px !important;
+            margin-bottom: 20px !important;
+            border: 1px !important;
+            border-top: 2px solid #E9E8E8 !important;
+        }
+
+        label {
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            width: 100% !important;
+        }
+    </style>
+}
+
+<div class="page-content radian-view margin-20  margin-page-content">
+    <div class="title-container">
+        
+    </div>
+    <div class="row margin-horizontal-0">
+        <div class="panel">
+
+            <div class="panel-body padding-top-20">
+                <div class="dian-alert dian-alert-warning">
+                    <i class="fa fa-info-circle" style="margin-right: 15px;"></i>
+                    <p>
+                        <strong>¡Importante!</strong> <br>
+                        Su empresa se encuentra en el proceso de pruebas de validación, el set de pruebas se encuenta 
+                        <strong>@(Model.Software.OtherDocElecSoftwareStatusName)</strong>. <br>
+                        Usted debe proporcinar el identificador del set de pruebas (TestSetld) <strong>@(ViewBag.TestSetId)</strong> 
+                        en el web service para el envío de su set de pruebas.
+                    </p>
+                </div>
+                
+                <div class="row margin-horizontal-0 margin-top-20">
+                    <div id="panel-form" data-target="#panel-form" data-toggle="panel-overlay">
+
+                        @using (Html.BeginForm("SetTestDetails", "OthersElectronicDocAssociated", FormMethod.Post))
+                        {
+                            <div class="setTestODE">
+                                @Html.HiddenFor(m => m.Id)
+                                @Html.Hidden("equivalentElectronicDocumentId", equivalentDocumentId)
+                                @Html.Partial("_setTestResult")
+                            </div>
+                            <div class="panel-footer">
+                                <button type="submit" class="btn btn-primary mr-9">Gráfico</button>
+                                @Html.ActionLink("Cerrar", "Index", "OthersElectronicDocAssociated", new { Id = ViewBag.Id }, new { @class = "btn btn-secondary" })
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/js/Radian/RadianIndex.js"></script>
+    <script src="~/Content/js/Radian/constants.js"></script>
+
+    <script type="text/javascript">
+        function restartCountersTest(url, testResult, docElecSoftwareId) {
+            //console.log(testResult);
+            var confirmMessage = bootboxMessage.CONFIRMATION_RESTART;
+            var complement = bootboxMessage.CONFIRMATION_RESTART_COMPLEMENT;
+            var operation = () => {
+                var actionError = (error) => {
+                    window.location.reload();
+                }
+                var actionSuccess = (result) => {
+                    window.location.reload();
+                }
+                var data = {
+                    model: testResult,
+                    docElecSoftwareId: docElecSoftwareId
+                }
+                ajaxFunction(url, "POST", data, actionError, actionSuccess);
+            }
+            var buttons = ConfirmExec(operation)
+            showConfirmationComplement(confirmMessage, buttons, null, null, complement);
+        }
+    </script>
+}

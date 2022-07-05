@@ -1,0 +1,74 @@
+﻿@model Gosocket.Dian.Web.Models.RadianApproved.RadianApprovedOperationModeViewModel
+
+@Html.Partial("_factorOperationMode")
+@{
+    string contributorType = Model.Contributor.RadianContributorTypeId.ToString();
+    string operationMode = Model.Contributor.RadianOperationModeId.ToString();
+
+}
+@section Scripts{
+
+    <script src="~/Content/js/Radian/RadianIndex.js"></script>
+    <script src="~/Content/js/Radian/RadianOperationMode.js"></script>
+    <script src="~/Content/js/Radian/constants.js"></script>
+    <script src="~/Content/js/Radian/RadianSteps.js"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            var contributorId = @Model.Contributor.Id;
+            var contributorTypeId = parseInt(@contributorType);
+            var softwareType = "";
+            DeleteOperationMode('@Url.Action("DeleteOperationMode", "RadianApproved")');
+            "@operationMode" != "2" && $("#OperationModeSelected").attr("disabled", "disabled");
+            if ("@operationMode" != "2") {
+                $("#OperationModeSelectedId").val(1);
+            } else {
+                $("#OperationModeSelectedId").change(function (value) {
+                    showLoading('#panel-form', 'Cargando', 'Buscando datos, por favor espere.');
+                    var software = $("#OperationModeSelectedId").val();
+                    RenderAutocomplete('@Url.Action("AutoCompleteProvider", "RadianApproved")', contributorId, contributorTypeId, software);
+                })
+                $("#bussiness-name").change(function (element) {
+                    LoadSoftwareList(element.target.value);
+                })
+            }
+
+            $("#save-operation-mode").click(function (e) {
+                var form = $("#radian-operation-form");
+                if ($(form).valid()) {
+                    e.preventDefault();
+                    showLoading('#panel-form', 'Cargando', 'Guardando datos, por favor espere.')
+                    var SetOperationViewModel = {
+                        RadianContributorId: @Model.Contributor.RadianContributorId,
+                        SoftwareType: $("#OperationModeSelectedId").val(),
+                        SoftwareId: $("#SoftwareNameList option:selected").val(),
+                        CustomerId: $("#bussiness-name option:selected").val(),
+                        SoftwareName: $("#SoftwareName").val(),
+                        Pin: $("#SoftwarePin").val(),
+                        Url: '@Model.SoftwareUrl',
+                     };
+                    AddOperationMode("@Url.Action("UpdateFactorOperationMode", "RadianApproved")",SetOperationViewModel);
+                }
+            })
+
+            $("#combobox").combobox();
+            $("#toggle").on("click", function () {
+                $("#combobox").toggle();
+            });
+
+            $(".cancel-register").click(function () {
+                var cancelData = {
+                    url: "@Url.Action("DeleteUser", "RadianApproved")",
+                    href: '@Url.Action("Index", "Radian")',
+                    id: '@Model.Contributor.Id',
+                    type: @Model.Contributor.RadianContributorTypeId,
+                    state: '@Model.Contributor.RadianState'
+                };
+                cancelRegister(cancelData);
+            });
+        })
+    </script>
+
+
+
+}

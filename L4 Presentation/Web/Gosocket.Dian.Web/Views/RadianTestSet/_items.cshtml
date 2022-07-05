@@ -1,0 +1,53 @@
+﻿@model Gosocket.Dian.Web.Models.RadianTestSetTableViewModel
+@using Newtonsoft.Json
+@{ 
+    var htmlPartial = JsonConvert.SerializeObject(Html.Partial("_detailsTestSet").ToString());
+}
+<div class="table-responsive">
+    <table class="simple-table documents-table table table-striped table-hover align-middle margin-bottom-0" data-int="0">
+        @if (Model.RadianTestSets.Count == 0)
+        {
+            <tr style="background-color: transparent !important;">
+                <td class="text-nowrap text-center" colspan="12" style="padding-left: 0 !important; padding-right: 0 !important;">
+                    <div class="alert dataTables_empty">
+                        Ningún set de pruebas disponible para mostrar.
+                    </div>
+                </td>
+            </tr>
+        }
+        else
+        {
+            <thead>
+                <tr>
+                    <th class="col-md-2">Modo de operación</th>
+                    <th class="col-md-2">Descripción</th>
+                    <th class="col-md-2">Documentos</th>
+                    <th class="col-md-2">Documentos por Eventos</th>
+                    <th class="col-md-2">Estado</th>
+                    <th class="col-md-2">Creado por</th>
+                    <th class="col-md-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var set in Model.RadianTestSets)
+                {
+                <tr>
+                    <td class="text-nowrap"><a>@set.OperationModeName</a></td>
+                    <td class="text-nowrap"><a>@set.Description</a></td>
+                    <td class="text-nowrap"><a>@set.TotalDocumentRequired</a></td>
+                    <td class="text-nowrap"><a class="btn btn-xs add-tooltip" data-tooltip="tooltip" data-placement="bottom" title="Ver" href="javascript:showDetails(@htmlPartial, '@set.OperationModeName', '@Url.Action("GetTestSetSummary","RadianTestSet")');"><i class="fa fa-eye"></i></a></td>
+                    <td class="text-nowrap">
+                        @{
+                            var text_color = set.Active ? "text-gosocket" : "text-red";
+                            var text_status = set.Active ? "Activo" : "Inactivo";
+                            <a>@text_status</a>
+                        }
+                    </td>
+                    <td class="text-nowrap"><a>@set.CreatedBy</a></td>
+                    <td class="text-nowrap clickable-row" data-href="@Url.Action("Edit","RadianTestSet",new { operationModeId = set.OperationModeId})"><i class="fa fa-pencil"></i></td>
+                </tr>
+                }
+            </tbody>
+        }
+    </table>
+</div>

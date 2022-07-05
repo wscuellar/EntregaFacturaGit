@@ -1,0 +1,161 @@
+﻿@model Gosocket.Dian.Web.Models.PayrollViewModel
+
+<style>
+    .fa-download {
+        color: #348441;
+        font-size: 125%;
+    }
+
+    .radian-subtitle-line {
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="row radian-subtitle-container">
+    <p class="sub-title">
+        Resultados de búsqueda
+    </p>
+
+</div>
+
+<div class="table-responsive padding-bottom-15">
+    <table colspan="13" class="documents-table table table-striped table-hover align-middle margin-bottom-0" data-int="0">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 50px;"></th>
+                    <th class="text-center">No. Nómina</th>
+                    <th class="text-left">Apellidos y Nombre</th>
+                    <th class="text-center">Tipo Documento</th>
+                    <th class="text-left">No. Documento</th>
+                    <th class="text-left">Salario</th>
+                    <th class="text-left">Devengado</th>
+                    <th class="text-left">Deducido</th>
+                    <th class="text-left">Valor total</th>
+                    <th class="text-left">Mes de validación</th>
+                    <th class="text-left">Novedad</th>
+                    <th class="text-center">No. Nomina Ajuste</th>
+                    <th class="text-left">Resultado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Payrolls.Any())
+                {
+                    <tr style="background-color: transparent !important;">
+                        <td class="text-nowrap text-center" colspan="13" style="padding-left: 0 !important; padding-right: 0 !important;">
+                            <div class="alert panel-footer-grey">
+                                Ningún documento disponible para mostrar.
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @foreach (var p in Model.Payrolls)
+                {
+                    <tr>
+                        <td class="text-center"><a href="@(p.link)"><span class="fa fa fa-download add-tooltip download-document" data-original-title="Descargar elementos"></span></a></td>
+                        <td class="text-nowrap text-center">@p.NumeroNomina</td>
+                        <td class="text-nowrap text-left">@p.ApellidosNombre</td>
+                        <td class="text-nowrap text-center">@p.TipoDocumento</td>
+                        <td class="text-nowrap text-left">@p.NoDocumento</td>
+                        <td class="text-nowrap text-left">@p.Salario.ToString("C0")</td>
+                        <td class="text-nowrap text-left">@p.Devengado.ToString("C0")</td>
+                        <td class="text-nowrap text-left">@p.Deducido.ToString("C0")</td>
+                        <td class="text-nowrap text-left">@p.ValorTotal.ToString("C0")</td>
+
+                        @{
+                            var monthName = string.Empty;
+
+                            switch (int.Parse(string.IsNullOrWhiteSpace(p.MesValidacion) ? "0" : p.MesValidacion))
+                            {
+                                case 1:
+                                    monthName = "Enero";
+                                    break;
+                                case 2:
+                                    monthName = "Febrero";
+                                    break;
+                                case 3:
+                                    monthName = "Marzo";
+                                    break;
+                                case 4:
+                                    monthName = "Abril";
+                                    break;
+                                case 5:
+                                    monthName = "Mayo";
+                                    break;
+                                case 6:
+                                    monthName = "Junio";
+                                    break;
+                                case 7:
+                                    monthName = "Julio";
+                                    break;
+                                case 8:
+                                    monthName = "Agosto";
+                                    break;
+                                case 9:
+                                    monthName = "Septiembre";
+                                    break;
+                                case 10:
+                                    monthName = "Octubre";
+                                    break;
+                                case 11:
+                                    monthName = "Noviembre";
+                                    break;
+                                case 12:
+                                    monthName = "Diciembre";
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            <td class="text-nowrap text-left">@monthName</td>
+                        }
+
+                        @if (p.Novedad.HasValue && p.Novedad == true)
+                        {
+                            <td class="text-left">
+                                <div style="width: 52px;
+                                            height: 13px;
+                                            background-color: #348441"></div>
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="text-left"></td>
+                        }
+
+                        <td class="text-nowrap text-center">@p.NumeroAjuste</td>
+
+                        @if (p.Resultado == "Aprobado")
+                        {
+                            <td class="text-left">Validada</td>
+                        }
+                        else
+                        {
+                            <td class="text-left">@p.Resultado</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+</div>
+
+<div class="row margin-horizontal-0 padding-top-0">
+    @if (Model.Payrolls.Any())
+    {
+        <div class="col-md-9 table-toolbar-left padding-left-0">
+            <span>Mostrando @((Model.TotalItems) < Model.MaxItemCount ? Model.TotalItems : Model.MaxItemCount) de @Model.TotalItems resultados</span>
+        </div>
+        <div class="col-md-3 table-toolbar-right padding-right-0 table-pagination">
+            <span class="text-muted">
+                <strong>@((Model.Page + 1).ToString().PadLeft(2, char.Parse("0")))-@(((Model.TotalItems) <= Model.MaxItemCount) ? "01" : Math.Ceiling((double)((double)Model.TotalItems / (double)Model.MaxItemCount)).ToString().PadLeft(2, char.Parse("0")))</strong>
+            </span>
+            <div class="btn-group btn-group margin-left-5">
+                <a class="btn btn-default paginate-btn prev-page" @(Model.Page == 0 ? "disabled=\"disabled\"" : "")>
+                    <span class="fa fa-chevron-left"></span>
+                </a>
+                <a class="btn btn-default paginate-btn next-page" @((!Model.HasMoreData) ? "disabled=\"disabled\"" : "")>
+                    <span class="fa fa-chevron-right"></span>
+                </a>
+            </div>
+        </div>
+    }
+</div>

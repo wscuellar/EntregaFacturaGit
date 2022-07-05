@@ -1,0 +1,86 @@
+﻿@using Gosocket.Dian.Infrastructure;
+@model Gosocket.Dian.Web.Models.RadianApproved.RadianApprovedViewModel
+@Html.AntiForgeryToken()
+@{
+    ViewBag.Title = "Datos";
+    string contributorType = "";
+    switch (Model.Contributor.RadianContributorTypeId)
+    {
+        case 1:
+            contributorType = "Facturador Electrónico";
+            break;
+        case 2:
+            contributorType = "Proveedor Tecnológico";
+            break;
+        case 3:
+            contributorType = "Sistema de negociación";
+            break;
+        case 4:
+            contributorType = "Factor";
+            break;
+    }
+    string classInput = Model.Step == 4 ? "col-sm-2" : "col-sm-3";
+}
+@if (Request.Params["RadianOperationMode"] != "2")
+{
+    <div class="row radian-subtitle-container">
+        <p class="subtitle-view" style="padding: 8px 0px 20px 8px;">
+            @ViewBag.title
+        </p>       
+    </div>
+}
+<div class="row radian-personal-info">
+    <div class="row">
+        <div class="@classInput">
+            <div class="form-group">
+                @Html.LabelFor(m => m.Nit, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.Nit, new { @class = "form-control contributorFileType-props input-general", disabled = "disabled" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(m => m.Name, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control contributorFileType-props input-general", disabled = "disabled" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(m => m.BusinessName, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.BusinessName, new { @class = "form-control contributorFileType-props input-general", disabled = "disabled" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control contributorFileType-props input-general", disabled = "disabled" })
+            </div>
+        </div>
+    </div>
+    @if (Model.Step == 4 || Request.Params["RadianOperationMode"] == "2")
+    {
+        <div class="row">
+            <div class="@classInput">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.RadianState, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.RadianState, new { @class = "form-control contributorFileType-props input-general", disabled = "disabled" })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.RadianContributorTypeId, new { @class = "control-label" })
+                    @Html.TextBox("RadianContributorTypeId", contributorType, new { @class = "form-control contributorFileType-props input-general", disabled = "disabled" })
+                </div>
+            </div>
+        </div>
+    }
+    @if ((ConfigurationManager.GetValue("Environment") == "Hab" || ConfigurationManager.GetValue("Environment") == "Local") && Model.RadianState == "Habilitado" && !User.IsInRole("Administrador") && ConfigurationManager.GetValue("BotonSincronizar") == "true")
+        {
+            <div id="panel" data-target="#panel-form" data-toggle="panel-overlay" class="panel panel-bordered-dian margin-bottom-0">
+                <div class="text-left">
+                    <div class="col-md-3 col-md-offset-9">
+                        <button type="button" class="btn btn-secondary btn-sync-to-production">Sincronizar a Producción</button>
+                    </div>
+                </div>
+            </div>
+        }
+</div>

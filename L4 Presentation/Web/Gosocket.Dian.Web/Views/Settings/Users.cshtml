@@ -1,0 +1,239 @@
+﻿@model Gosocket.Dian.Web.Models.UserTableViewModel
+@using Gosocket.Dian.Web.Common;
+@using Gosocket.Dian.Domain.Common
+
+@{
+    ViewBag.Title = "Listado de usuarios con roles asignados";
+}
+
+@section css
+{
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <link href="~/Content/plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
+    <link href="~/Content/plugins/chosen/chosen.min.css" rel="stylesheet">
+
+    <style>
+    </style>
+}
+
+@{var defaultHtmlAttr = new Dictionary<string, object> { { "class", "form-control" } };}
+
+<div class="page-content margin-15">
+    <div class="row margin-horizontal-0">
+
+        <div id="panel-content" data-target="#panel-content" data-toggle="panel-overlay" class="panel">
+            <div class="panel-body padding-top-20">
+                @if (User.IsInAnyRole("Administrador", "Super"))
+                {
+                    <div class="form-inline padding-bottom-10">
+                        <div class="row margin-horizontal-0">
+
+                            <div class="col-sm-12 table-toolbar-left padding-left-0" style="padding: 5px 20px !important;">
+                                <a href="@Url.Action("AddUser", "Settings")" class="btn btn-success btn-radian-success">Agregar</a>
+                            </div>
+                        </div>
+                       
+                    </div>
+                }
+
+                <div class="pad-btm padding-bottom-0">
+                    <div class="row margin-horizontal-0">
+                        @using (Html.BeginForm("Users", "Settings", FormMethod.Post, new { id = "users-form" }))
+                        {
+                            <input id="page" name="Page" type="hidden" value="@Model.Page" />
+                            <div class="row margin-horizontal-0 margin-bottom-10" style="margin-left:5px; margin-right:5px;">
+                                <div class="col-md-12 padding-horizontal-0">
+                                    <div id="panel-form" data-target="#panel-form" data-toggle="panel-overlay" class="panel panel-bordered-dian">
+
+                                        <div class="panel-body padding-20 padding-bottom-0">
+                                            <div class="row">
+                                                <div class="col-sm-3 padding-xs-0">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+                                                        @Html.TextBoxFor(m => m.Email, defaultHtmlAttr)
+                                                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-left" style="margin: 20px 20px 0px 20px !important;">
+                                            <button type="button" class="btn btn-secondary btn-hover-gosocket btn-search">Buscar</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row margin-horizontal-0">
+                                <div class="col-md-9 table-toolbar-left padding-left-0">
+                                </div>
+                                <div class="col-md-3 table-toolbar-right padding-right-0 table-pagination">
+                                    @if (Model.Users.Count > 0)
+                                    {
+                                        <span class="text-muted">
+                                            <strong>@(Model.Page * Model.Length + 1)-@(Model.Length > Model.Users.Count ? (Model.Page) * Model.Length + Model.Users.Count : (Model.Page + 1) * Model.Length)</strong>
+                                        </span>
+                                        <div class="btn-group btn-group margin-left-5" style="padding-right: 20px;">
+                                            <a class="btn btn-default paginate-btn prev-page" @(Model.Page == 0 ? "disabled=\"disabled\"" : "")>
+                                                <span class="fa fa-chevron-left"></span>
+                                            </a>
+                                            <a class="btn btn-default paginate-btn next-page" @(Model.Users.Count < Model.Length ? "disabled=\"disabled\"" : "")>
+                                                <span class="fa fa-chevron-right"></span>
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                @Html.Partial("_userList")
+
+                @if (Model.Users.Count == 0)
+                {
+                    <div class="alert panel-footer-grey text-center contributor-alert">
+                        Ningún resultado disponible para mostrar.
+                    </div>
+                }
+
+                <div class="pull-right table-pagination padding-top-10">
+                    @if (Model.Users.Count > 0)
+                    {
+                        <span class="text-muted">
+                            <strong>@(Model.Page * Model.Length + 1)-@(Model.Length > Model.Users.Count ? (Model.Page) * Model.Length + Model.Users.Count : (Model.Page + 1) * Model.Length)</strong>
+                        </span>
+                        <div class="btn-group btn-group margin-left-5" style="padding-right: 20px;">
+                            <a class="btn btn-default paginate-btn prev-page" @(Model.Page == 0 ? "disabled=\"disabled\"" : "")>
+                                <span class="fa fa-chevron-left"></span>
+                            </a>
+                            <a class="btn btn-default paginate-btn next-page" @(Model.Users.Count < Model.Length ? "disabled=\"disabled\"" : "")>
+                                <span class="fa fa-chevron-right"></span>
+                            </a>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+
+            var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switchery'));
+            elems.forEach(function (html) {
+                if (!html.classList.contains('switchery-instance')) {
+                    html.classList.add('switchery-instance');
+                    new Switchery(html, { color: "#3875A0", size: 'small' });
+                }
+            });
+
+            $('.admin-switch').each(function () {
+                var input = $(this);
+                if (input.hasClass('admin-active'))
+                    input.click();
+            });
+
+            $('.admin-switch').change(function () {
+                var current = $(this);
+
+                if (current.hasClass('cancel')) {
+                    current.removeClass('cancel')
+                    return
+                }
+
+                if (current.hasClass('admin-active'))
+                    current.removeClass('admin-active');
+                else
+                    current.addClass('admin-active');
+
+                updateUserRole(current.attr('id'), "Administrador", current.hasClass('admin-active'));
+            });
+
+            $('.super-switch').each(function () {
+                var input = $(this);
+                if (input.hasClass('super-active'))
+                    input.click();
+            });
+
+            $('.super-switch').change(function () {
+                var current = $(this);
+
+                if (current.hasClass('cancel')) {
+                    current.removeClass('cancel')
+                    return
+                }
+
+                if (current.hasClass('super-active'))
+                    current.removeClass('super-active');
+                else
+                    current.addClass('super-active');
+
+                updateUserRole(current.attr('id'), "Super", current.hasClass('super-active'));
+            });
+
+            var form = $('#users-form');
+            $("#Email").focus();
+
+            if (@Model.Users.Count == 0) {
+                $('.table-responsive').css('display', 'none');
+            }
+
+            $('.btn-search').click(function () {
+                if (form.valid()) {
+                    $('#page').val(0);
+                    showLoading('#panel-form', 'Loading', 'Searching data, please wait.');
+                    $(this).attr('disabled', 'disabled');
+                    $(this).html('<i class="fa fa-circle-o-notch fa-spin"></i> Buscando...');
+                    $('.table-pagination').css('display', 'none');
+                    $('.table-responsive').css('display', 'none');
+                    form.submit();
+                }
+            });
+
+            // Pagination
+            $('.next-page').click(function () {
+                $('#page').val(@Model.Page + 1);
+                form.submit();
+            });
+
+            $('.prev-page').click(function () {
+                $('#page').val(@Model.Page - 1);
+                form.submit();
+            });
+            // Pagination
+        });
+
+        updateUserRole = (id, role, value) => {
+            showLoading('#panel-content', 'Actualizando', 'Procesando datos, por favor espere.');
+            $.ajax({
+                url: "@Url.Action("UpdateUserRole", "Settings")?id=" + id + "&role=" + role + "&value=" + value,
+                success: function (data) {
+                    hideLoading("#panel-content");
+                    if (data.ok) {
+                        if (!value) $("#tr-" + id).remove();
+                        $.niftyNoty({
+                            type: "primary",
+                            container: 'page',
+                            message: "Operación realizada satisfactoriamente.",
+                            timer: 5000
+                        });
+                    } else {
+                        $.niftyNoty({
+                            type: "danger",
+                            container: 'page',
+                            message: "No se pudo realizar operación.",
+                            timer: 5000
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+}

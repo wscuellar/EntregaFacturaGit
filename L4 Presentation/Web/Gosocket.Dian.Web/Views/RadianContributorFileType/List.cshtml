@@ -1,0 +1,215 @@
+﻿@model Gosocket.Dian.Web.Models.RadianContributorFileTypeTableViewModel
+@{
+    ViewBag.Title = "Configurar tipos de ficheros";
+}
+
+@section css
+{
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <link href="~/Content/plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
+    <link href="~/Content/plugins/chosen/chosen.min.css" rel="stylesheet">
+
+}
+
+
+@{var defaultHtmlAttr = new Dictionary<string, object> { { "class", "form-control input-general" } };}
+
+<div class="page-content radian-view margin-15">
+    <div class="margin-horizontal-0 margin-top-50">
+        <div class="panel">
+            <div class="panel-body padding-top-20">
+                <div class="pad-btm padding-bottom-0">
+                    <div class="row margin-horizontal-0">
+                        @using (Html.BeginForm("List", "RadianContributorFileType", FormMethod.Post, new { id = "contributorFileTypes-form" }))
+                        {
+                            <input id="page" name="Page" type="hidden" value="@Model.Page" />
+                            <div class="row margin-horizontal-0 margin-bottom-10" style="margin-left:5px; margin-right:5px;">
+                                <div class="col-md-12 padding-horizontal-0">
+                                    <div id="panel-form" data-target="#panel-form" data-toggle="panel-overlay" class="panel panel-bordered-dian">
+
+                                        <div class="panel-body padding-20 padding-bottom-0">
+                                            <div class="row underline-subrow">
+                                                <h4 class="sub-title padding-0"><strong>Listado de ficheros</strong></h4>
+                                                <div class="row margin-top-40 margin-bottom-10 ">
+                                                    <div class="col-sm-3 padding-xs-0">
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(m => m.Name, new { @class = "control-label" })
+                                                            @Html.TextBoxFor(m => m.Name, defaultHtmlAttr)
+                                                            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-sm-3 padding-xs-0">
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(m => m.SelectedRadianContributorTypeId, new { @class = "control-label" })
+                                                            <br />
+                                                            @Html.DropDownListFor(m => m.SelectedRadianContributorTypeId, Model.RadianContributorTypes, "Todos", new { @class = "form-control input-general" })
+                                                            @Html.ValidationMessageFor(m => m.SelectedRadianContributorTypeId, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-3 padding-xs-0">
+                                                        <div class="form-group" style="padding-top:22px">
+                                                            <button type="submit" class="btn btn-success btn-radian-success">&nbsp;&nbsp;Buscar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row margin-top-20">
+                                                <div class="form-inline padding-bottom-10">
+                                                    <div class="row margin-horizontal-0">
+                                                        <button type="button" class="btn btn-success btn-radian-success" data-toggle="modal" data-target="#addRadianContributorFileTypeModal">
+                                                            Agregar
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                @Html.Partial("_Items")
+
+                                                @if (Model.RadianContributorFileTypes.Count == 0)
+                                                {
+                                                    <div class="alert dataTables_empty text-center contributor-alert">
+                                                        Ningún resultado disponible para mostrar.
+                                                    </div>
+                                                }
+
+                                               
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modals -->
+    <div class="modal modal-default fade" id="addRadianContributorFileTypeModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Agregar tipo de fichero RADIAN</h4>
+                </div>
+                <div class="modal-body">
+                    @{
+                        @Html.Partial("~/Views/RadianContributorFileType/_Add.cshtml", Model.RadianContributorFileTypeViewModel)
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal modal-default fade" id="modifyModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Editar Tipo de Fichero Radian</h4>
+                </div>
+                <div id="modifyWrapper" class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal modal-default fade" id="deleteModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Eliminar Tipo de Fichero Radian</h4>
+                </div>
+                <div id="deleteWrapper" class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end modals-->
+</div>
+
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+
+            var form = $('#contributorFileTypes-form');
+
+            if (@Model.RadianContributorFileTypes.Count == 0) {
+                $('.table-responsive').css('display', 'none');
+            }
+
+            $('.btn-search').click(function () {
+                if (form.valid()) {
+                    $('#page').val(0);
+                    showLoading('#panel-form', 'Cargando', 'Buscando datos, por favor espere.');
+                    $(this).attr('disabled', 'disabled');
+                    $(this).html('<i class="fa fa-circle-o-notch fa-spin"></i> Buscando...');
+                    $('.table-pagination').css('display', 'none');
+                    $('.table-responsive').css('display', 'none');
+                    form.submit();
+                }
+            });
+
+            // Pagination
+            $('.next-page').click(function () {
+                $('#page').val(@Model.Page + 1);
+                form.submit();
+            });
+
+            $('.prev-page').click(function () {
+                $('#page').val(@Model.Page - 1);
+                form.submit();
+            });
+            // Pagination
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $('.modifyModal').modal();
+        });
+        function editRadianContributorFileType(id) {
+            $.ajax({
+                url: '/RadianContributorFileType/GetEditRadianContributorFileTypePartialView/' + id,
+                success: function (data, status, xhr) {
+                    var injectingPartialView = xhr.getResponseHeader('InjectingPartialView');
+                    if (injectingPartialView == "true") {
+                        $('#modifyWrapper').html(data);
+                        $.validator.unobtrusive.parse($("#edit-radianContributorFileType-form"));
+                        $('#modifyModal').modal('show');
+                    }
+                    else {
+                        window.location.href = '/User/Login';
+                    }
+                }
+            });
+        };
+
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $('.deleteModal').modal();
+        });
+        function deleteRadianContributorFileType(id) {
+            $.ajax({
+                url: '/RadianContributorFileType/GetDeleteRadianContributorFileTypePartialView/' + id,
+                success: function (data, status, xhr) {
+                    var injectingPartialView = xhr.getResponseHeader('InjectingPartialView');
+                    if (injectingPartialView == "true") {
+                        $('#deleteWrapper').html(data);
+                        $('#deleteModal').modal('show');
+                    }
+                    else {
+                        window.location.href = '/User/Login';
+                    }
+                }
+            });
+        };
+    </script>
+}

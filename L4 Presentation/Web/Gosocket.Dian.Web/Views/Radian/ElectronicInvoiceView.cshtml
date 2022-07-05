@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewBag.Title = "Modo de operación";
+}
+<div class="page-content radian-view margin-20">
+    <div class="title-container">
+        <p class="title-view">
+            @ViewBag.title
+        </p>      
+    </div>
+
+
+
+    <div class="container-fluid RadianContainerBegin"  id="panel-form" data-target="#panel-form" data-toggle="panel-overlay">
+
+        <p class="sub-title">Seleccione el modo de operación en el Registro de Facturas Electrónicas:</p>
+        <hr>
+        
+        <div class="hab-menu-container">
+            <button class="hab-menu-button" id="1" contributorType="1" operationMode="1">
+                <img src="~/Content/img/electronic-document-icons/nomina-participante-emisor.svg" height="130" />
+                Operación Directa
+                <p class="hab-menu-button-subtitle">Software propio</p>
+            </button>
+            
+            <button class="hab-menu-button" id="2" contributorType="1" operationMode="2">
+                <img src="~/Content/img/electronic-document-icons/nomina-proveedor-servicios-tecnologicos.svg" height="130" />
+                Operación Indirecta
+                <p class="hab-menu-button-subtitle">A través de un aliado</p>
+            </button>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Content/js/Radian/RadianIndex.js"></script>
+
+    <script>
+
+            var contributorId = '@ViewBag.ContributorId';
+            var operationClick = false;
+
+        $('.hab-menu-button').click(function () {
+            showLoading('#panel-form', 'Cargando', 'Procesando datos, por favor espere.');
+                if (!operationClick) {
+                    operationClick = true;
+
+                    var RegistrationDataViewModel = {
+                        ContributorId: '@ViewBag.ContributorId',
+                        RadianContributorType: $(this).attr('contributorType'),
+                        RadianOperationMode: $(this).attr('operationMode'),
+                    };
+
+                    CallExecution("POST", '@Url.Action("RegistrationValidation", "Radian")', RegistrationDataViewModel,
+                        function (param) {
+                            CallExecution("POST", '@Url.Action("Add", "RadianApproved")', RegistrationDataViewModel,
+                                function (param) {
+                                    var url = "@Url.Action("Index", "RadianApproved")"+ "?ContributorId=" + param.ContributorId + "&RadianContributorType=" + param.RadianContributorType + "&RadianOperationMode=" + param.RadianOperationMode;
+                                    window.location.href = url;
+                                }, false, () => hideLoading('#panel-form')
+                            );
+                        }, true, () => hideLoading('#panel-form')
+                    );
+                }
+            });
+
+    </script>
+}
+

@@ -1,0 +1,317 @@
+﻿@model Gosocket.Dian.Web.Models.OtherDocElecSetupOperationModeViewModel
+@{
+	ViewBag.Title = "Configurar modo de operación - " + @Model.ContributorType;
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-content radian-view margin-20">
+	<div class="title-container">
+		<div class="back-button"><a href="@Url.Action("Index","OthersElectronicDocAssociated", new { Id = (int)ViewBag.Id })"><i class="fa fa-chevron-left"></i> Volver</a></div>
+	</div>
+	<div class="margin-top-50">
+		<div class="panel" id="panel-form" data-target="#panel-form" data-toggle="panel-overlay">
+			<div class="panel-body padding-top-20">
+				<div class="pad-btm padding-bottom-0">
+					<div class="row margin-horizontal-0">
+						@using (Html.BeginForm("SetupOperationModePost", "OthersElectronicDocAssociated", FormMethod.Post, new { id = "formst" }))
+						{
+							@Html.HiddenFor(m => m.ContributorId)
+							@Html.HiddenFor(m => m.ContributorTypeId)
+							@Html.HiddenFor(m => m.SoftwareId)
+							@Html.HiddenFor(m => m.SoftwareIdBase)
+							@Html.HiddenFor(m => m.ElectronicDocId)
+
+							@Html.Partial("_setupOperationModeForm")
+						}
+
+						@Html.Partial("_setupOperationModeList")
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="~/Content/js/Radian/RadianIndex.js"></script>
+<script src="~/Content/js/Radian/RadianOperationMode.js"></script>
+<script src="~/Content/js/Radian/constants.js"></script>
+<script src="~/Content/js/Radian/RadianSteps.js"></script>
+
+@section Scripts{
+
+    <script>
+
+        $(document).on('change', '#ProviderId', function () {
+            let selectedValue = $(this).val();
+            if (selectedValue != null && selectedValue != '') {
+                $('#SoftwareUrl').val('');
+                getSoftwares(selectedValue);
+            }
+        });
+
+        $(document).on('change', '#ddlsoftware', function () {
+            let selectedValue = $(this).val();
+            if (selectedValue != null && selectedValue != '') {
+                $('#SoftwareId').val(selectedValue);
+                $('#SoftwareName').val($('#ddlsoftware option:selected').text());
+                $("#validddlSoftwareName").text('');
+                getDataSoftwareSeleccionado(selectedValue);
+            }
+        })
+
+        function getDataSoftwareSeleccionado(SoftwareId){
+
+            $.ajax({
+                url: "@Url.Action("GetDataBySoftwareId")",
+                type: "POST",
+                data: { SoftwareId: SoftwareId },
+                datatype: "json",
+                success: function (result) {
+                    if (result != null) {
+                        console.log(result);
+                        $('#SoftwareUrl').val(result.url);
+                        //$('#SoftwareType').val(result.SoftwareType);
+                        $('#SoftwarePin').val(result.SoftwarePIN);
+                    }
+                    else
+                        ErrorDialogV2("¡Notificación!", "No se pudo realizar la consulta");
+                },
+                complete: function () {
+
+                },
+                error: function (result) {
+                    ErrorDialogV2("¡Notificación!", "Error de conexión al intentar obtener el listado de Software");
+                    console.log(result.status + ' ' + result.statusText);
+                    return false;
+                }
+            });  //ajax
+
+        }
+
+        function getSoftwares(ProviderId) {
+            $("#ddlsoftware").html('<option value="" selected="selected">Seleccione...</option>');
+            $('#ulddlsoftware').html('<li data-original-index="0" class="selected"><a tabindex="0" class=""' +
+                'data-normalized-text="Seleccione..."><span class="text">Seleccione...</span><span class="fa fa-check check-mark"></span></a></li>');
+
+            cambiarTextoSelect();
+
+            $.ajax({
+                url: "@Url.Action("GetSoftwaresByContributorId", "OthersElectronicDocAssociated")",
+                type: "POST",
+                data: { id: ProviderId, electronicDocumentId: @Model.ElectronicDocId },
+                datatype: "json",
+                success: function (result) {
+
+                    if (result != null && result.res != null) {
+
+                        $.each(result.res, function (index, value) {
+                            $('#ddlsoftware').append('<option value="' + value.Id + '">' + value.Name + '</option>');
+                            $('#ulddlsoftware').append('<li data-original-index="' + (index + 1) + '"><a tabindex="0" class=""' +
+                                ' data-normalized-text="' + value.Name + '"><span class="text">' + value.Name + '</span>' +
+                                '<span class="fa fa-check check-mark"></span></a></li>');
+                        });
+                    }
+                    else
+                        ErrorDialogV2("¡Notificación!", "No se pudo realizar la consulta");
+                },
+                complete: function () {
+
+                },
+                error: function (result) {
+                    ErrorDialogV2("¡Notificación!", "Error de conexión al intentar obtener el listado de Software");
+                    console.log(result.status + ' ' + result.statusText);
+                    return false;
+                }
+            });  //ajax
+
+        }
+
+        function cambiarTextoSelect() {
+            var botones = $(":button");
+            var boton;
+
+            $.each(botones, function (index1, val1) {
+                if (val1.attributes != undefined && $(val1).hasClass("selectpicker")) {
+
+                    boton = val1;
+                    $.each(val1.attributes, function (index, value) {
+
+                        if (value.localName == "data-id" && value.nodeValue == "ddlsoftware") {
+
+                            boton.firstElementChild.textContent = "Seleccione...";
+
+                        }
+                    });
+                }
+            });
+        }
+
+        $(document).ready(function () {
+
+            fnShowHidecampos();
+
+            $("#OperationModeId").change(function () {
+                fnShowHidecampos();
+            });
+
+            $("#SoftwareName").blur(function () {
+                fnvalidSoftwareName();
+            });
+
+            $("#SoftwarePin").blur(function () {
+                fnvalidSoftwarePin();
+            });
+
+            $("#save-operation-mode").click(function (e) {
+                var form = $('#formst');
+                if (form.valid()) {
+                    var valid1 = fnvalidSoftwarePin();
+                    var valid2 = fnvalidSoftwareName();
+                    if (valid1 || valid2)
+                        return;
+
+                    e.preventDefault();
+                    showLoading('#panel-form', 'Cargando', 'Guardando datos, por favor espere.')
+                    var model = {
+                        Id: $("#OperationModeSelectedId").val(),
+                        ContributorId: @Model.ContributorId,
+                        OperationModeId: $("#OperationModeId").val(),
+                        ElectronicDocId: $("#ElectronicDocId").val(),
+                        ContributorTypeId: $("#ContributorTypeId").val(),
+                        SoftwareName: $("#SoftwareName").val(),
+                        SoftwarePin: $("#SoftwarePin").val(),
+                        SoftwareUrl: $("#SoftwareUrl").val(),
+                        SoftwareIdBase: $("#SoftwareIdBase").val(),
+                        ProviderId: $("#ProviderId").val(),
+                        SoftwareId: $("#SoftwareId").val(),
+                    };
+                    AddOperationModeODE("@Url.Action("SetupOperationModePost", "OthersElectronicDocAssociated")", model);
+                }
+            });
+
+
+
+
+
+            function AddOperationModeODE(url, ViewModel) {
+                var metod = 'POST';
+                var data = ViewModel;
+                var actionError = (error) => {
+                    var message = error.Message;
+                    var button = AlertExec();
+                    showConfirmation(message, button);
+                }
+                var actionSuccess = (response) => {
+                    var message = response.Message;
+                    var operation = () => { location.reload() };
+                    var button = AlertExec(operation);
+                    showConfirmation(message, button);
+                }
+                ajaxFunction(url, metod, data, actionError, actionSuccess);
+            }
+
+            ODEDeleteOperationMode = function (Id) {
+                showConfirmation("¿Está seguro de eliminar el modo de operación configurado previamente?", ConfirmExec(
+                        function () {
+                            $.ajax({
+                                url: "@Url.Action("DeleteOperationMode", "OthersElectronicDocAssociated")",
+                                type: "POST",
+                                data: { Id: Id },
+                                datatype: "json",
+                                success: function (result) {
+                                    if (result != null) {
+
+                                        if (result.code != 200) {
+                                            showConfirmation(result.message, AlertExec(null))
+                                            return;
+                                        }
+                                        SuccessDialogV2Callback("Se canceló el registro exitosamente", "", () => { location.reload(); });
+                                    }
+                                    else
+                                        ErrorDialogV2("¡Notificación!", "No se pudo realizar la cancelación.");
+                                    },
+                                complete: function () {
+
+                                },
+                                error: function (result) {
+                                    ErrorDialogV2("¡Notificación!", "Error de conexión al intentar hacer la cancelación.");
+                                    console.log(result.status + ' ' + result.statusText);
+                                    return false;
+                                }
+                        });  //ajax
+
+
+                     }
+                    , "", () => hideLoading('#panel-form')));
+            };
+
+            function fnvalidSoftwareName() {
+                $("#validSoftwareName").text('');
+                $("#validddlSoftwareName").text('');
+                if ($("#OperationModeId").val() == "1") {
+                    if ($("#SoftwareName").val() == '' || $("#SoftwareName").val() == undefined) {
+                        $("#validSoftwareName").text("El campo es requerido");
+                        return true;
+                    }
+                }
+                if ($("#OperationModeId").val() == "2") {
+                    if ($('#ddlsoftware option:selected').text() == '' || $('#ddlsoftware option:selected').text() == undefined || $('#ddlsoftware option:selected').text() == 'Seleccione...') {
+                        $("#validddlSoftwareName").text("El campo es requerido");
+                       return true;
+                   }
+                }
+                return false;
+            }
+
+            function fnvalidSoftwarePin() {
+                $("#validSoftwarePin").text('');
+                if ($("#OperationModeId").val() == "1") {
+                    if ($("#SoftwarePin").val() == '' || $("#SoftwarePin").val() == undefined) {
+                        $("#validSoftwarePin").text("El campo es requerido");
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            function fnShowHidecampos() {
+
+                $("#SoftwareName").val('');
+                $("#SoftwarePin").val('');
+                $("#validSoftwareName").text('');
+                $("#validSoftwarePin").text('');
+
+                if ($("#OperationModeId").val() == "1") {
+                    $(".section-own-software").show();
+                    $(".section-software-technology-provider").hide();
+                    $("#divSoftwarePin").show();
+                        $('#DivSoftwareId').show()
+
+                        $('#SoftwareName').removeAttr('disabled')
+						$('#Provider').val('@Model.Provider');
+				        $('#SoftwareName').val('');
+                }
+                else {
+                    if ($("#OperationModeId").val() == "2") {
+                        $(".section-own-software").hide();
+                        $(".section-software-technology-provider").show();
+
+                    }
+                    else
+                    {
+						$(".section-own-software").show();
+                        $(".section-software-technology-provider").hide();
+                        $("#divSoftwarePin").hide();
+						$('#Provider').val('DIRECCIÓN DE IMPUESTO Y ADUANAS NACIONALES - DIAN')
+						$('#SoftwareName').val('Solución gratuita')
+						$('#DivSoftwareId').hide()
+                        $('#SoftwareName').attr('disabled', true)
+						$('#SoftwareUrl').val("@Model.SoftwareUrl")
+
+
+                    }
+                }
+
+            }
+        });
+    </script>
+}

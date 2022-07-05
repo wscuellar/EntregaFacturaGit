@@ -1,0 +1,640 @@
+﻿@using Gosocket.Dian.Infrastructure;
+@model Gosocket.Dian.Web.Models.OthersElectronicDocAssociatedViewModel
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = Model.EsElectronicDocNomina ? Model.ContributorType + " de " + Model.ElectronicDoc : "Pruebas de aceptación";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var EquivalentElectronicDocument = (List<SelectListItem>) ViewBag.EquivalentElectronicDocuments;
+}
+
+@section css
+{
+    <style type="text/css">
+
+
+        #steps-otherdocELectAssociate .steps li {
+            width: 20%;
+            height: 108.15px;
+            border-radius: 50%;
+            margin: 0px 20px;
+        }
+
+        #steps-otherdocELectAssociate .steps a {
+            background: none;
+            position: relative;
+        }
+
+        #steps-otherdocELectAssociate .steps span.number {
+            display: none;
+        }
+
+        #steps-otherdocELectAssociate .steps img {
+            width: 100%;
+        }
+
+        #steps-otherdocELectAssociate .steps li a {
+            height: inherit;
+            top: -3px;
+            position: relative;
+        }
+
+        #steps-otherdocELectAssociate .steps li.done {
+            opacity: 1;
+            position: relative;
+        }
+
+            #steps-otherdocELectAssociate .steps li.done::after {
+                content: "";
+                width: 108px;
+                height: 130px;
+                background: transparent;
+                position: absolute;
+                top: 0px;
+            }
+
+            #steps-otherdocELectAssociate .steps li.done::before {
+                width: 20px;
+                height: 20px;
+            }
+
+        #steps-otherdocELectAssociate .steps li:nth-child(3).disabled a {
+            background: url(../../Content/images/png/flagFinish.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #steps-otherdocELectAssociate .steps li:nth-child(2).current a {
+            background: url(../../Content/images/png/pruebas2.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0px;
+            padding: 0px;
+        }
+
+
+        #steps-otherdocELectAssociate .steps li:nth-child(3).current a {
+            /*background: url(../../Content/images/png/pruebas2.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0px;
+            padding: 0px;*/
+            background: url(../../Content/images/png/flagFinish.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #steps-otherdocELectAssociate .steps li:nth-child(1).done a {
+            background: url(../../Content/images/png/ingreso1.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #steps-otherdocELectAssociate .steps li:nth-child(2).done a {
+            /*background: url(../../Content/images/png/pendiente1.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0px;
+            padding: 0px;*/
+            background: url(../../Content/images/png/pruebas1.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0px;
+            padding: 0px;
+        }
+
+
+        #steps-otherdocELectAssociate .steps li:nth-child(3).done a {
+            /*background: url(../../Content/images/png/pruebas1.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0px;
+            padding: 0px;*/
+            background: url(../../Content/images/png/flagFinish.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #steps-otherdocELectAssociate .steps li.last a {
+            background: url(../../Content/images/png/flagFinish.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #steps-otherdocELectAssociate .steps li.done::before {
+            content: "";
+            position: absolute;
+            right: 7px;
+            top: 2px;
+            width: 35px;
+            height: 35px;
+            background-repeat: no-repeat;
+            background-image: url(../../Content/images/png/done.png);
+            z-index: 1;
+        }
+
+        #steps-otherdocELectAssociate .content {
+            background: none;
+        }
+
+        #steps-otherdocELectAssociate section {
+            border: 1px solid #348441;
+            padding: 0;
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
+
+        .test-redirect {
+            border: none !important;
+            background: #F4F5F7;
+        }
+
+        #steps-otherdocELectAssociate .radian-conventions {
+            margin: 20px 0;
+        }
+
+        #steps-otherdocELectAssociate .steps {
+            width: 65%;
+            margin: auto;
+            padding: 50px 0px;
+            margin-bottom: 30px;
+        }
+
+        #steps-otherdocELectAssociate li.done .name-state {
+            position: absolute;
+            bottom: -29px;
+            color: black;
+            text-align: center;
+            width: 100%;
+            padding: 0px 12px;
+        }
+
+        #steps-otherdocELectAssociate li.current .name-state {
+            position: absolute;
+            bottom: -29px;
+            text-align: center;
+            color: #348441;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        #steps-otherdocELectAssociate li.done:nth-child(2) .name-state {
+            bottom: -20px;
+        }
+
+        #steps-otherdocELectAssociate li.disabled .name-state {
+            position: absolute;
+            bottom: -29px;
+            text-align: center;
+            color: #B0B0B0;
+            width: 100%;
+            padding: 0 12px;
+        }
+
+        #steps-otherdocELectAssociate .content {
+            background: none;
+        }
+
+        .wizard > .content {
+            margin-top: 20px;
+            min-height: auto !important;
+            margin: 0px !important;
+            -webkit-border-radius: 0px !important;
+            border-radius: 0px !important;
+        }
+
+        .panel-footer {
+            padding: 15px 15px !important;
+        }
+
+        .margin-right-20 {
+            margin-right: 30px !important;
+        }
+        
+        .margin-page-content {
+            margin-top: 50px !important;
+        }
+    </style>
+}
+<div class="page-content radian-view margin-20 margin-page-content">
+    
+    <div class="row margin-horizontal-0 margin-top-20">
+        <div class="panel" id="panel-form" data-target="#panel-form" data-toggle="panel-overlay" style="background:none;">
+            <div>
+                <div class="margin-20 padding-bottom-25">
+                    <div class="row">
+                        @if (Model.EsEquivalentDocument)
+                        {
+                            <div class="form-group col-sm-4" style="padding: 0px 0px 20px 40px;">
+                                <label for="equivalentElectronicDocumentId" class="control-label">Tipo de documento</label>
+                                @Html.DropDownList("equivalentElectronicDocumentId", EquivalentElectronicDocument, new { id = "equivalentElectronicDocumentId", Name = "equivalentElectronicDocumentId", @class = "form-control", onchange = "equivalentDocumentSelected(this)" })
+                            </div>
+                        }
+                    </div>
+                    <div>
+                        <div class="radian-personal-info" style="background:white;border-radius:25px 25px 0px 0px;">
+                            @Html.Partial("_personalInfo")
+                        </div>
+                        @if (Model.Step > 0)
+                        {
+                            <div class="panel-footer" style="border-radius: 0px 0px 25px 25px;padding: 0px 30px 30px 30px !important;">
+                                <button name="SubmitPrueba" id="btnDetalleSetPruebas"
+                                        class="btn btn-primary Set-Prueba mr-9">
+                                    Set de pruebas
+                                </button>
+
+                                <button type="button"
+                                        class="btn btn-secondary mr-9 @(Model.Software.OtherDocElecSoftwareStatusName != "Rechazado" ? "disabled" : "")"
+                                        id="btnReiniciarSerPruebas">
+                                    Reiniciar SET de pruebas
+                                </button>
+
+                                <button type="button"
+                                        class="btn btn-secondary btn-sync-to-production @(((ConfigurationManager.GetValue("Environment") == "Hab" || ConfigurationManager.GetValue("Environment") == "Local" || ConfigurationManager.GetValue("Environment") == "Test") && Model.State == "Habilitado" && !User.IsInRole("Administrador") && ConfigurationManager.GetValue("BotonSincronizar") == "true") ? "" : "disabled")"
+                                        id="btnSincronizarAProduccion">
+                                    Sincronizar a Producción
+                                </button>
+                            </div>
+                        }
+                        <!--
+                    <h3><span class="name-state">Ingreso de solicitud</span></h3>
+                    <section>
+                    </section>
+
+                    <h3><span class="name-state">Pruebas de aceptación</span></h3>
+                    <section>
+                    </section>
+
+                                    <h3></h3>
+                                        -->
+
+
+                        <section>
+                            @*@Html.Partial("_finish")*@ @*Aparece con Step == 2*@
+                        </section>
+                    </div>
+
+                    @if (Model.Step == 3)
+                    {
+                        @Html.Partial("_finish")
+
+                        <div class="footer-table">
+                            <div class="row margin-horizontal-0">
+                                @Html.Partial("_usersLegal")
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+        <div class="title-container" style="float: left;">
+            <div class="back-button btn btn-secondary"><a href="@Url.Action("AddOrUpdate","OthersElectronicDocuments", new { ElectronicDocumentId = Model.ElectronicDocId,OperationModeId=0,ContributorIdType=Model.ContributorTypeId,ContributorId=Model.ContributorId })">Volver</a></div>
+        </div>
+        @*Modal*@
+
+
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/Content/js/Radian/RadianIndex.js"></script>
+    <script src="~/Content/js/Radian/constants.js"></script>
+    <script src="~/Content/js/Radian/RadianSteps.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            const isEquivalentDocument = "@Model.EsEquivalentDocument".toLowerCase() == "true";
+
+            if (isEquivalentDocument) {
+                disabledTestSetButtons();
+            }
+
+            RenderStepsOtherDoc(@((Model.Step == 2) ? (Model.Step - 1) : Model.Step));
+            //RenderStepsOtherDoc(2);
+
+            $(".cancel-register").click(function () {
+                $("#txtCancelRegistro").val("");
+                $('#lbldangercancelregister').removeClass("text-danger text-bold");
+                $("#dialogcancelarregistro").modal('show');
+            });
+
+            $(".savecancel-register").click(function () {
+
+                if ($("#txtCancelRegistro").val() == null || $("#txtCancelRegistro").val() == '') {
+                    $('#lbldangercancelregister').addClass("text-danger  text-bold");
+                    return;
+                }
+
+                $("#dialogcancelarregistro").modal('hide');
+                showConfirmation("¿Desea cancelar el registro del participante @Model.ContributorType de @Model.ElectronicDoc ?", ConfirmExec(
+                        function () {
+
+                            $.ajax({
+                            url: "@Url.Action("CancelRegister", "OthersElectronicDocAssociated")",
+                            type: "POST",
+                                data: { id: @Convert.ToInt32(ViewBag.Id), description: $("#txtCancelRegistro").val() },
+                            datatype: "json",
+                            success: function (result) {
+
+                                if (result != null) {
+
+                                    if (result.Code != 200) {
+                                        ErrorDialogV2("¡Notificación!", result.Message);
+                                        return;
+                                    }
+
+                                    SuccessDialogV2Callback("Se canceló el registro exitosamente", "", () => {
+                                        var url = "@Url.Action("Index", "OthersElectronicDocuments")";
+                                        window.location.href = url;
+                                    });
+                                }
+                                else
+                                    ErrorDialogV2("¡Notificación!",  "No se pudo realizar la cancelación");
+                            },
+                            complete: function () {
+
+                            },
+                            error: function (result) {
+                                ErrorDialogV2("¡Notificación!", "Error de conexión al intentar hacer la cancelación");
+                                console.log(result.status + ' ' + result.statusText);
+                                return false;
+                            }
+                        });  //ajax
+
+
+                     }
+                    , "", () => hideLoading('#panel-form')));
+              });
+
+            $('.submit-button').click(function (e) {
+                showConfirmation("¿Esta seguro de enviar el @ViewBag.Title ?", ConfirmExec(
+                        function () {
+                                    showLoading('#panel-form', 'Cargando', 'Procesando datos, por favor espere.');
+
+                                    var entity = {
+                                                    Id :@Model.Id,
+                                                    ContributorId :@Model.ContributorId,
+                                                    Name : '@Model.Name',
+                                                    Nit : @Model.Nit,
+                                                    BusinessName :'@Model.BusinessName',
+                                                    Email : '@Model.Email',
+                                                    Step : @Model.Step,
+                                                    State: '@Model.State',
+                                                    OperationMode:'@Model.OperationMode',
+                                                    OperationModeId :@Model.OperationModeId,
+                                                    ElectronicDoc :'',
+                                                    ElectronicDocId : @Model.ElectronicDocId,
+                                                    ContributorType : '',
+                                                    ContributorTypeId : @Model.ContributorTypeId,
+                                                 };
+
+                                    CallExecutionWithData("POST", '@Url.Action("EnviarContributor", "OthersElectronicDocAssociated")', entity,
+                                         function (param, data) {
+                                             SuccessDialogV2Callback(data.message, "", () => {
+                                                var url = "@Url.Action("Index", "OthersElectronicDocAssociated")";
+                                                window.location.href = url;
+                                             });
+
+                                             @*bootbox.dialog({
+                                                 message: "<div class='media'><div class='media-body' style='padding: 40px 30px 55px 30px !important;  line-height: 100%'><div style='text-align: center;'><i class='fa fa-check-circle iconcheckcircle'></i></div><br><h4 class='text-thin'>" + data.message+"</h4></div></div>",
+                                                 onEscape: () => {
+                                                        var url = "@Url.Action("Index", "OthersElectronicDocAssociated")";
+                                                        window.location.href = url;
+                                                 }
+                                                });*@
+                                         }, false, () => hideLoading('#panel-form')
+                                     );
+                     }
+                     , "", () => hideLoading('#panel-form')));
+              });
+
+            $('.Set-Prueba').click(function (e) {
+                const isEquivalentDocument = "@Model.EsEquivalentDocument".toLowerCase() == "true",
+                    equivalentDocumentSelected = $("#equivalentElectronicDocumentId").val();
+                if (!isEquivalentDocument) {
+                    var url = "@Url.Action("GetSetTestResult", "OthersElectronicDocAssociated")" + "/" + @ViewBag.Id;
+                    window.location.href = url;
+                    return;
+                }
+                if (!equivalentDocumentSelected) {
+                    ErrorDialogV2("¡Notificación!", "Debe especificar un documento equivalente para poder visualizar el set de pruebas");
+                    return;
+                }
+                var url = `@Url.Action("GetSetTestResultEquivalentDocument", "OthersElectronicDocAssociated")?Id=@ViewBag.Id&equivalentElectronicDocumentId=${equivalentDocumentSelected}`;
+                window.location.href = url;
+			});
+
+            $('#btnReiniciarSerPruebas').click(function (e) {
+                const isEquivalentDocument = "@Model.EsEquivalentDocument".toLowerCase() == "true",
+                    equivalentDocumentSelected = $("#equivalentElectronicDocumentId").val();
+
+                if (isEquivalentDocument && !equivalentDocumentSelected) {
+                    ErrorDialogV2("¡Notificación!", "Debe especificar un documento equivalente para poder reiniciar el set de pruebas.");
+                    return;
+                }
+
+                showConfirmation(`¿Estás seguro que deseas reiniciar el SET de pruebas?`, ConfirmExec(
+                    () => {
+                        showLoading('#panel-form', 'Configuración', 'Reiniciando Set de pruebas, por favor espere.');
+				        $.ajax({
+                            url: "@Url.Action("RestartSetTestResultV2", "OthersElectronicDocAssociated")",
+                            method: "Post",
+                            data: {
+                                Id: "@ViewBag.Id",
+                                equivalentDocumentId: isEquivalentDocument ? equivalentDocumentSelected : null
+                            },
+				            error: function (a, b, c) {
+						            alert("Error");
+                                hideLoading('#panel-form');
+                                showNotification('danger', 'fa fa-bolt fa-2x', 'floating', '', b + ': ' + c);
+                            },
+				            success: function (data) {
+                                hideLoading('#panel-form');
+                                if (data.Code == 200) {
+                                    showNotification('success', 'fa fa-check-circle fa-2x', 'floating', 'Aviso', data.Message);
+                                    window.location.reload();
+                                }
+                                else {
+                                    showNotification('danger', 'fa fa-exclamation-circle fa-2x', 'floating', 'Error', data.Message);
+                                }
+                            }
+                        });
+                    }
+                    , "", () => hideLoading('#panel-form'))
+                );
+			});
+
+
+            $("#view-costumers").click(function () {
+                var page = @Model.PageTable;
+                var element = '#table-customers';
+                var htmlPartial = @(Html.Raw(JsonConvert.SerializeObject(Html.Partial("_customers").ToString().Trim('"'))));
+                var urlSearch = '@Url.Action("CustomersList", "OthersElectronicDocAssociated")';
+                var form = @(Html.Raw(JsonConvert.SerializeObject(Html.Partial("_formSearch").ToString().Trim('"'))));
+                var Id = "@Model.Id";
+                var dialog = bootbox.dialog({
+                    message: htmlPartial,
+                    className: "table-data modal-radian",
+                    size: 'large'
+                });
+                dialog.init(function (e) {
+                    var dataTable = JSON.parse('@Html.Raw(Json.Encode(Model.Customers))');
+                    var customersTotalCount = @Model.CustomerTotalCount;
+                    var columns = [
+                        { data: 'Nit' },
+                        { data: 'BussinessName' },
+                        { data: 'State' }
+                    ]
+                    var ajaxData = {
+                        ContributorId: @Model.Id,
+                        code: "#NitSearch",
+                        State: "#StateSelect",
+                        Page: page,
+                        pagesize: 10
+                    };
+                    var paramsObject = {
+                        element: element,
+                        data: dataTable,
+                        form: form,
+                        urlSearch: urlSearch,
+                        Id: Id,
+                        page: page,
+                        tableRendered: null,
+                        customersTotalCount: customersTotalCount,
+                        columns: columns,
+                        ajaxData: ajaxData
+                    }
+                    RenderTable(paramsObject);
+                })
+            });
+
+            $('#btnSincronizarAProduccion').click(function () {
+                const isEquivalentDocument = "@Model.EsEquivalentDocument".toLowerCase() == "true",
+                    equivalentDocumentSelected = $("#equivalentElectronicDocumentId").val();
+
+                if (isEquivalentDocument && !equivalentDocumentSelected) {
+                    ErrorDialogV2("¡Notificación!", "Debe especificar un documento equivalente para poder sincronizarlo a producción.");
+                    return;
+                }
+
+                showConfirmation(`¿Estás seguro que deseas sincronizar a producción?`, ConfirmExec(
+                    () => {
+                        syncToProduction(@Model.Nit, @Model.ContributorId, "@Model.SoftwareId", "@Model.SoftwareIdBase", isEquivalentDocument ? equivalentDocumentSelected : null);
+                    }
+                    , "", () => hideLoading('#panel-form'))
+                );
+            });
+
+             function RenderStepsOtherDoc(index) {
+                 var validator;
+                 $("#steps-otherdocELectAssociate").steps({
+                     headerTag: "h3",
+                     bodyTag: "section",
+                     transitionEffect: "slideLeft",
+					 autoFocus: true,
+					 href:"#",
+                     startIndex: index,
+                     enablePagination: false,
+                     enableKeyNavigation: false,
+                     onInit: () => {
+                         var tooltip = $('.add-tooltip');
+                         if (tooltip.length) tooltip.tooltip();
+                     }
+                 });
+             }
+
+
+            syncToProduction = (code, contributorId, softwareId, softwareIdBase, equivalentDocumentId) => {
+                showLoading('#panel-form', 'Configuración', 'Enviando a sincronizar datos, por favor espere.');
+                var __RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+                $.ajax({
+                    url: "@Url.Action("SyncToProduction", "OthersElectronicDocAssociated")",
+                    method: "Post",
+                    data: {
+                        __RequestVerificationToken: __RequestVerificationToken,
+                        code: code,
+                        contributorId: contributorId,
+                        softwareId:softwareId,
+                        softwareIdBase: softwareIdBase,
+                        equivalentDocumentId
+                    },
+                    error: function (a, b, c) {
+                        hideLoading('#panel-form');
+                        showNotification('danger', 'fa fa-bolt fa-2x', 'floating', '', b + ': ' + c);
+                    },
+                    success: function (data) {
+                        hideLoading('#panel-form');
+                        if (data.success) {
+                            /*showNotification('success', 'fa fa-check-circle fa-2x', 'floating', 'Aviso', data.message);*/
+                            SuccessDialogV2(data.message, "");
+                        }
+                        if (!data.success) {
+                            /*showNotification('danger', 'fa fa-exclamation-circle fa-2x', 'floating', 'Error', data.message);*/
+                            ErrorDialogV2("¡Notificación!", data.message);
+                        }
+                    }
+                });
+            }
+
+			$('#steps-otherdocELectAssociate-t-0').removeAttr("href");
+			$('#steps-otherdocELectAssociate-t-1').removeAttr("href");
+			$('#steps-otherdocELectAssociate-t-2').removeAttr("href");
+
+        });
+
+        function disabledTestSetButtons() {
+            $("#btnDetalleSetPruebas").attr("disabled", "disabled");
+            $("#btnReiniciarSerPruebas").attr("disabled", "disabled");
+            $("#btnSincronizarAProduccion").attr("disabled", "disabled");
+        }
+
+        function equivalentDocumentSelected(equivalentDocumentInput) {
+            disabledTestSetButtons();
+            if (!equivalentDocumentInput.value) return;
+
+            showLoading('#panel-form', 'Cargando', 'Obtiendo la información del documento equivalente seleccionado, por favor espere.');
+            $.ajax({
+                url: "@Url.Action("GetInformationOfTestSetEquivalentDocument", "OthersElectronicDocAssociated")",
+                method: "Post",
+                data: {
+                    otherDocElecContributorOperationId: @(ViewBag.Id),
+                    equivalentDocumentId: equivalentDocumentInput.value
+                },
+                error: function (a, b, c) {
+                    hideLoading('#panel-form');
+                    showNotification('danger', 'fa fa-bolt fa-2x', 'floating', '', a.Message);
+                },
+                success: function (data) {
+                    hideLoading('#panel-form');
+                    if (!data.success) {
+                        showNotification('danger', 'fa fa-exclamation-circle fa-2x', 'floating', 'Error', data.Message);
+                        return;
+                    }
+                    $("#btnDetalleSetPruebas").removeAttr("disabled");
+                    $("#btnDetalleSetPruebas").removeClass("disabled");
+
+                    if (data.CanResetTestSet) {
+                        $("#btnReiniciarSerPruebas").removeAttr("disabled");
+                        $("#btnReiniciarSerPruebas").removeClass("disabled");
+                    }
+                    if (data.CanSyncToProduction) {
+                        $("#btnSincronizarAProduccion").removeAttr("disabled");
+                        $("#btnSincronizarAProduccion").removeClass("disabled");
+                    }
+                }
+            });
+        }
+    </script>
+}

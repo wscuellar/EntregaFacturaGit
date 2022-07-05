@@ -1,0 +1,66 @@
+﻿@using Gosocket.Dian.Web.Models
+
+<div class="table-responsive padding-20">
+    <table class="simple-table documents-table table table-striped table-hover align-middle margin-bottom-0" data-int="0">
+        @if (ViewBag.listData == null && ((List<TestSetOthersDocumentsViewModel>)ViewBag.listData).Count <= 0)
+        {
+            <tr style="background-color: transparent !important;">
+                <td class="text-nowrap text-center" colspan="12" style="padding-left: 0 !important; padding-right: 0 !important;">
+                    <div class="alert dataTables_empty">
+                        Ningún set de pruebas disponible para mostrar.
+                    </div>
+                </td>
+            </tr>
+        }
+        else
+        {
+            <thead>
+                <tr>
+                    <th class="text-left">Otro Documento</th>
+                    <th class="text-left">Descripción</th>
+                    <th class="text-left">Modo de operación</th>
+                    <th class="text-left">Fecha de asociación</th>
+                    <th class="text-left">Documentos</th>
+                    <th class="text-left">No Otros Documentos</th>
+                    <th class="text-left">Documentos rechazados</th>
+                    <th class="text-left">Estado</th>
+                    <th class="text-left">Creado por</th>
+                    <th class="text-left"><div style="margin-left:40px;margin-right:40px">Proceso</div></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (TestSetOthersDocumentsViewModel item in ((List<TestSetOthersDocumentsViewModel>)ViewBag.listData))
+                {
+
+                <tr class='clickable-row' data-href="@Url.Action("Add","TestSetOthersDocuments",
+                            new { electronicDocumentId = item.ElectronicDocumentId, operationModeId = item.OperationModeId})">
+                    <td class="text-nowrap text-left"><a>@item.ElectronicDocumentName</a></td>
+                    <td class="text-nowrap"><a>@item.Description</a></td>
+                    <td class="text-nowrap text-center"><a>@item.OperationModeName</a></td>
+                    <td class="text-nowrap text-center">
+                        <a>@item.Date.ToString("dd-MM-yyyy")</a>
+                    </td>
+                    <td class="text-nowrap text-center"><a>@item.TotalDocumentRequired</a></td>
+                    <td class="text-nowrap text-center"><a>@item.OthersDocumentsRequired</a></td>
+                    <td class="text-nowrap text-center"><a></a></td>
+                    <td class="text-nowrap text-center">
+                        <a>@(item.Active ? "Activo" : "Inactivo")</a>
+                    </td>
+                    <td class="text-nowrap text-left"><a>@item.CreatedBy</a></td>
+                    <td class="text-left">
+                        <table class="tableSinBorders">
+                            <td class="text-left">                                    
+                                    <a class="btn btn-xs add-tooltip" data-tooltip="tooltip" data-placement="bottom" title="Editar" href="@Url.Action("Add","TestSetOthersDocuments",
+                                            new { electronicDocumentId = item.ElectronicDocumentId, operationModeId = item.OperationModeId})"
+                                       style="color: #348441;text-decoration: underline;"><i class="fa fa-pencil"></i></a>
+                             </td>
+                           
+                        </table>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        }
+    </table>
+</div>

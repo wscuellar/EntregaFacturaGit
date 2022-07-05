@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Gosocket.Dian/v15/Server/sqlite3/db.lock
+bin/
+debug
+obj
+*.dll
+*.exe
+.vs
+packages
+*.suo
+/L4 Presentation/Web/Gosocket.Dian.Web/Properties/ServiceDependencies/gtpa-web-biller-test-utnxse - Web Deploy/profile.arm.json
+/L4 Presentation/Web/Gosocket.Dian.Web/Properties/ServiceDependencies/gtpa-web-prototype-test-utnxse - Web Deploy/profile.arm.json

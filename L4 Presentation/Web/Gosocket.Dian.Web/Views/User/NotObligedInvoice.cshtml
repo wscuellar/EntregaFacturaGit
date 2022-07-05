@@ -1,0 +1,166 @@
+﻿@using Gosocket.Dian.Domain.Common
+@using Gosocket.Dian.Infrastructure
+@using Gosocket.Dian.Web.Models
+@using Newtonsoft.Json
+@model UserLoginViewModel
+
+@{
+    ViewBag.Title = "Acceder";
+    Layout = "~/Views/Shared/_LayoutNewLogin.cshtml";
+    RecoverPasswordModel recoverPasswordModel = new RecoverPasswordModel();
+    recoverPasswordModel.IdentificationTypesRecover = Model.IdentificationTypes;
+
+}
+
+<link href="~/Content/css/Radian/RadianIndex.css" rel="stylesheet" />
+<style>
+    .textRecovery {
+        margin-top: 15px;
+        margin-bottom: 15px;
+        font-style: normal;
+        font-size: 14px;
+        line-height: 14px;
+        color: #348441;
+        cursor: pointer;
+    }
+
+    .btn-link-recovery {
+        padding-left: 0px;
+        padding-top: 2px;
+        text-decoration: underline;
+        color: #348441;
+    }
+</style>
+
+    <div class="login-wrapper" id="panel-forma" data-target="#panel-forma" data-toogle="panel-overlay">
+        <div class="bhoechie-tab-menu">
+            <div class="list-group">
+                <!-- admin -->
+                <a href="@Url.Action("Login", "User")" class="list-group-item text-center">
+                    <img src="~/Content/img/login-icons/Administrator.svg" /> <br> @Gosocket.Dian.Domain.Common.EnumHelper.GetEnumDescription(LoginType.Administrator)
+                </a>
+
+                <!-- company -->
+                <a href="@Url.Action("CompanyLogin", "User")" class="list-group-item text-center">
+                    <img src="~/Content/img/login-icons/Company.svg" /> <br> @Gosocket.Dian.Domain.Common.EnumHelper.GetEnumDescription(LoginType.Company)
+                </a>
+
+                <!-- external user -->
+                @*<a href="@Url.Action("ExternalUserLogin", "User")" class="list-group-item text-center">
+                        <h4 class="glyphicon glyphicon-user"></h4><br />@Gosocket.Dian.Domain.Common.EnumHelper.GetEnumDescription(LoginType.ExternalUser)
+                    </a>*@
+
+                <!-- person -->
+                <a href="@Url.Action("PersonLogin", "User")" class="list-group-item text-center">
+                    <img src="~/Content/img/login-icons/Person.svg" /> <br> @Gosocket.Dian.Domain.Common.EnumHelper.GetEnumDescription(LoginType.Person)
+                </a>
+
+                <!-- Not obliged to invoice -->
+                <a href="@Url.Action("NotObligedInvoice","User")" class="list-group-item text-center active">
+                    <img src="~/Content/img/login-icons/NotObligued.svg" /> <br> @Gosocket.Dian.Domain.Common.EnumHelper.GetEnumDescription(LoginType.NotObligedInvoice)
+                </a>
+
+                <!-- certificate -->
+                <a href="#" class="list-group-item text-center certificate-login-link">
+                    <img src="~/Content/img/login-icons/Certificate.svg" /> <br> @Gosocket.Dian.Domain.Common.EnumHelper.GetEnumDescription(LoginType.Certificate)
+                </a>
+
+                <a href="@Url.Action("SearchDocument", "User")" class="list-group-item text-center">
+                    <img src="~/Content/img/login-icons/SearchDocument.svg" /> <br> Buscar Documento
+                </a>
+            </div>
+        </div>
+
+        <div class="bhoechie-tab cardsLogin" style="display: none">
+            <div class="bhoechie-tab-content active" id="panel-form-login">
+                <span class="sub-title">Iniciar sesión</span>
+                <p class="mt-28">Selecciona una opción para continuar:</p>
+
+                <div id="menu-container">
+                    <button class="menu-button" id="legalRepresentative">
+                        <img src="~/Content/img/login-icons/Company.svg" height="77"/>
+                        Empresa
+                    </button>
+                    <button class="menu-button" id="authorizedUser">
+                        <img src="~/Content/img/login-icons/Person.svg" height="77"/>
+                        Persona
+                    </button>
+                </div>
+            </div>
+
+            <div class="userExLogin pxLogin">
+                <!-- company section -->
+                @Html.Partial("_notObligedInvoicePerson")
+            </div>
+        </div>
+    </div>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="https://www.google.com/recaptcha/api.js?render=@ConfigurationManager.GetValue("Recaptcha")"></script>
+    <script src="~/Content/js/user/forgot-password.js"></script>
+    <script src="~/Content/plugins/bootbox/bootbox.min.js"></script>
+    <script src="~/Content/js/Radian/RadianIndex.js"></script>
+    <script src="~/Content/js/user/exHandlerLogin.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            var htmlPartial = @(Html.Raw(JsonConvert.SerializeObject(Html.Partial("_forgotPasswordFormInvoice", recoverPasswordModel).ToString().Trim('"'))));
+            $(".cardsLogin").show();
+            if (location.href.indexOf('tlogin=1') > 0) {
+                showLoading("#panel-forma", "Validando datos", "Por favor esperar");
+                $(".pxLogin").hide();
+                $("#panel-form-login").hide();
+                $(".userExLogin").show();
+                hideLoading("#panel-forma");
+            }
+            else {
+
+                    $(".pxLogin").hide();
+
+                    $('.cCompany').click(function () {
+                        $("#panel-form-login").show();
+                        $(".pxLogin").hide();
+                    });
+
+                    $('#legalRepresentative').click(function () {
+                        //$("#panel-form-login").hide();
+                        //$(".companyLogin").show();
+                        window.location = '@Url.Action("NotObligedInvoiceCompany", "User")';
+                    });
+
+                    $('#authorizedUser').click(function () {
+                        $("#panel-form-login").hide();
+                        $(".userExLogin").show();
+                        cleanFields();
+                    });
+
+                    $('.certificate-login-link').click(function () {
+                        window.location = '@ConfigurationManager.GetValue("CertificateLoginUrl")';
+                    });
+
+                    $('.list-group-item').click(function () {
+                        cleanFields();
+                    });
+            }
+
+            var cleanFields = function () {
+                $('.field-validation-error').html('');
+                $('#DocumentKey').val('');
+                $('#PersonCode').val('');
+                $('input[name="CompanyCode"]').val('');
+                $('input[name="UserCode"]').val('');
+                $('#Password').val('');
+            };
+            rememberPassword(htmlPartial, '@Url.Action("RecoveryPassword", "User")');
+            grecaptcha.ready(function () {
+                grecaptcha.execute('@ConfigurationManager.GetValue("Recaptcha")', { action: 'adminLogin' }).then(function (token) {
+                    $(".RecaptchaToken").val(token);
+                });
+            });
+        });
+
+    </script>
+}

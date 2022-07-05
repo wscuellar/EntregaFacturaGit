@@ -1,0 +1,73 @@
+﻿@model Gosocket.Dian.Web.Models.TestSetTableViewModel
+@using Gosocket.Dian.Web.Common
+@{
+    if (User.IsInAnyRole("Administrador", "Super"))
+    {
+        ViewBag.Title = "Configurar sets de pruebas";
+    }
+    else
+    {
+        ViewBag.Title = "Listado sets de pruebas";
+    }
+}
+
+@section css
+{
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <link href="~/Content/plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
+    <link href="~/Content/plugins/chosen/chosen.min.css" rel="stylesheet">
+
+    <style>
+        
+    </style>
+}
+
+<div class="page-content margin-15">
+    <div class="row margin-horizontal-0">
+        <div class="tab-base">
+            <!--Tabs Content-->
+            <div class="tab-content padding-0"  style="background: transparent;">
+                <div id="tab-current-country" class="tab-pane fade active in">
+                    <div class="panel" style="background: transparent;">
+                        <div class="panel-body padding-top-20">
+                            @if (User.IsInAnyRole("Administrador", "Super"))
+                            {
+                                <div class="pad-btm form-inline padding-bottom-0">
+                                    <div class="row margin-horizontal-0">
+                                        <div class="col-md-10 table-toolbar-left padding-left-0" style="padding-bottom:20px;">
+                                            <a href="@Url.Action("Add", "TestSet")" class="btn btn-success btn-radian-success">Agregar Set de Pruebas</a>
+                                        </div>
+
+                                        <div class="col-md-2 table-toolbar-right padding-right-0">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @Html.Partial("_items")
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <script src="~/Content/plugins/bootstrap-select/bootstrap-select.min.js"></script>
+
+    <script src="~/Content/js/bootstrap-filestyle.min.js"></script>
+    <script src="~/Content/js/file-validator.js"></script>
+
+    <script>
+        $(document).ready(function ($) {
+
+        });
+    </script>
+}

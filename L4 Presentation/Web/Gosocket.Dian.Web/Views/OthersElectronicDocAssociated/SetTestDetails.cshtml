@@ -1,0 +1,163 @@
+﻿@model Gosocket.Dian.Web.Models.OthersElectronicDocAssociatedViewModel
+@{
+    ViewBag.Title = "Gráfico del SET de Pruebas " + ViewBag.EquivalentElectronicDocumentName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<div class="page-content radian-view margin-15 margin-page-content">
+    <div class="title-container">
+      
+    </div>
+    <div class="margin-horizontal-0">
+        <div class="panel">
+            <div class="panel-body padding-top-20">
+                <div class="dian-alert dian-alert-warning">
+                    <i class="fa fa-info-circle" style="margin-right: 15px;"></i>
+                    <p>
+                        <strong>¡Importante!</strong> <br>
+                        Su empresa se encuentra en el proceso de pruebas de validación, el set de pruebas se encuenta
+                        <strong>@(ViewBag.OtherDocElecSoftwareStatusName)</strong>. <br>
+                        Usted debe proporcinar el identificador del set de pruebas (TestSetld) <strong>@(ViewBag.TestSetId)</strong>
+                        en el web service para el envío de su set de pruebas.
+                    </p>
+                </div>
+                
+                <div class="margin-top-20">
+                    <p class="sub-title">
+                        Resumen documentos recibidos y aceptados para el Set de pruebas
+                    </p>
+
+                    <figure class="highcharts-figure-settest">
+                        <div id="setTestDetails"></div>
+                    </figure>
+                </div>
+
+                <div class="panel-footer">
+                    @if (Model.EsEquivalentDocument)
+                    {
+                        <a class="btn btn-primary mr-9" href="@Url.Action("GetSetTestResultEquivalentDocument", new { Id = ViewBag.Id, equivalentElectronicDocumentId = ViewBag?.EquivalentDocumentId })">
+                            Detalles
+                        </a>
+                        @Html.ActionLink("Cerrar", "GetSetTestResultEquivalentDocument", "OthersElectronicDocAssociated", new { Id = ViewBag.Id, equivalentElectronicDocumentId = ViewBag?.EquivalentDocumentId }, new { @class = "btn btn-secondary" })
+                    }
+                    else
+                    {
+                        if (!Model.EsSupportDocument)
+                        {
+                            <a class="btn btn-primary mr-9" href="@Url.Action("GetSetTestResult", new { Id = ViewBag.Id })">Detalles</a>
+                        }
+                        if (Model.EsElectronicDocNomina)
+                        {
+                            @Html.ActionLink("Cerrar", "Index", "OthersElectronicDocAssociated", new { Id = ViewBag.Id }, new { @class = "btn btn-secondary" })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Cerrar", "GetSetTestResult", "OthersElectronicDocAssociated", new { Id = ViewBag.Id }, new { @class = "btn btn-secondary" })
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+            var data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model,Newtonsoft.Json.Formatting.Indented));
+            showChart(data.GTestSetOthersDocumentsResult, data.TitleDoc1, data.TitleDoc2);
+            window.setTimeout(() => {
+                $(".highcharts-credits").remove();
+            }, 500);
+        });
+
+        function showChart(data, TitleDoc1, TitleDoc2) {
+            var dataChart = data;
+            Highcharts.chart('setTestDetails', {
+                chart: {
+                    type: 'bar'
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    /*alternateGridColor: '#EBEEEC',*/
+                    categories: [
+                        TitleDoc1,
+                        TitleDoc2
+                    ]
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Total'
+                    }
+                },
+                legend: {
+                    align: 'left',
+                    verticalAlign: 'top',
+                    margin: 32,
+                    symbolRadius: 0,
+                    x: 0,
+                    y: 12
+                },
+                tooltip: {
+                    headerFormat: '<b>{point.x}</b><br/>',
+                    pointFormat: '{series.name}: <b>{point.y}</b><br/>Total: <b>{point.stackTotal}</b>'
+                },
+                plotOptions: {
+                    series: {
+                        stacking: 'normal',
+                        borderRadius: 8
+                    }
+                },
+                series: [
+                    {
+                        name: 'Requeridos',
+                        color: '#FED064',
+                        data: [
+                            dataChart.OthersDocumentsRequired,
+                            dataChart.ElectronicPayrollAjustmentRequired
+                        ]
+                    },
+                    {
+                        name: 'Min requerido aceptado',
+                        color: '#C98802',
+                        data: [
+                            dataChart.OthersDocumentsAcceptedRequired,
+                            dataChart.ElectronicPayrollAjustmentAcceptedRequired
+                        ]
+                    },
+                    {
+                        name: 'Recibidos',
+                        color: '#41D78C',
+                        data: [
+                            dataChart.TotalOthersDocumentsSent,
+                            dataChart.TotalElectronicPayrollAjustmentSent
+                        ]
+                    },
+                    {
+                        name: 'Aceptados',
+                        color: '#00B4DC',
+                        data: [
+                            dataChart.OthersDocumentsAccepted,
+                            dataChart.ElectronicPayrollAjustmentAccepted
+                        ]
+                    },
+                    {
+                        name: 'Rechazados',
+                        color: '#F54E41',
+                        data: [
+                            dataChart.OthersDocumentsRejected,
+                            dataChart.ElectronicPayrollAjustmentRejected
+                        ]
+                    }
+                ]
+            });
+        }
+    </script>
+}

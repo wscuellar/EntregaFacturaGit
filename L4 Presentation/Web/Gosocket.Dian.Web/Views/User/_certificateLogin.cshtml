@@ -1,0 +1,31 @@
+﻿@using Gosocket.Dian.Web.Models
+@model UserLoginViewModel
+
+<div class="bhoechie-tab-content active">
+    <span class="sub-title">Iniciar sesión</span>
+    <p class="mt-28">Por favor diligencia los siguientes datos:</p>
+
+    <form method="post" action="@Url.Action("CertificateAuthentication","User")" style="margin-top: 20px;">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(x => x.RecaptchaToken, new { id = "CertificateRecaptchaToken", @class = "RecaptchaToken" })
+        @Html.HiddenFor(x => x.HashCode)
+        <div class="form-group">
+            @Html.LabelFor(t => t.IdentificationType, new { @class = "control-label" })
+            @Html.DropDownListFor(m => m.IdentificationType, new SelectList(Model.IdentificationTypes, "Id", "Description", Model.IdentificationType), new { id = "CompanyIdentificationType", @class = "form-control selectpicker" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(t => t.UserCode, new { @class = "control-label" })
+            @Html.TextBoxFor(m => m.UserCode, new { @class = "form-control", placeholder = "Ingrese la identificación del representante legal", autocomplete = "off" })
+            @Html.ValidationMessageFor(m => m.UserCode, "", new { @class = "" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(t => t.CompanyCode, new { @class = "control-label" })
+            @Html.TextBoxFor(m => m.CompanyCode, new { @class = "form-control", placeholder = "Ingrese el Nit de la empresa", autocomplete = "off", @readonly = true })
+            @Html.ValidationMessageFor(m => m.CompanyCode, "", new { @class = "" })
+            @Html.ValidationMessageFor(m => m.CertificateLoginFailed, "", new { @class = "" })
+        </div>
+        <button class="btn btn-primary" style="margin-top: 40px;">
+            Entrar
+        </button>
+    </form>
+</div>

@@ -1,0 +1,216 @@
+﻿@model Gosocket.Dian.Web.Models.FreeBiller.UserFiltersFreeBillerModel
+@using Newtonsoft.Json;
+
+@{
+    ViewBag.Title = "Permisos y perfiles Solución Gratuita";
+    var columnSize = 3;
+}
+
+<style>
+
+    /*.form-control {
+        border-radius: 4px;
+        height: 43px !important;
+        border: 1px solid #CCCCCC;
+    }
+
+    .title-container {
+        margin-bottom: 50px !important;
+        margin-top: 30px !important;
+    }*/ 
+</style>
+
+<div class="page-content margin-15">
+
+    <div class="title-container">
+      
+    </div>
+
+
+    <div class="row margin-horizontal-0">
+        <div class="tab-base">
+            <div class="tab-content padding-0" style="border-radius: 20px !important; background-color: #ffffff00 !important; ">
+                <div id="tab-current-country" class="tab-pane fade active in">
+                    <div id="divMain" class="panel" data-target="#divMain" data-toggle="panel-overlay" style="background: transparent;">
+                        <div class="panel-body padding-top-20">
+                            <div class="pad-btm padding-bottom-0">
+                                <div class="row margin-horizontal-0">
+                                    @using (Html.BeginForm("FreeBillerUser", "FreeBiller", FormMethod.Post, new { id = "freebiller-users-form" }))
+                                    {
+                                        @Html.HiddenFor(m => m.Page)
+                                        <div class="row margin-horizontal-0 margin-bottom-10" style="margin-left:5px; margin-right:5px;">
+                                            <div class="col-md-12 padding-horizontal-0">
+                                                <div id="document-list" class="panel panel-bordered-dian">
+
+                                                    <div class="panel-body padding-20 padding-bottom-0">
+                                                        <div class="row">
+                                                            <div class="col-sm-@columnSize padding-xs-0">
+                                                                <div class="form-group">
+                                                                    @Html.LabelFor(m => m.DocTypeId, new { @class = "control-label" })
+                                                                    @Html.DropDownListFor(m => m.DocTypeId, Model.DocTypes, new { @class = "form-control selectpicker" })
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-sm-3 padding-xs-0">
+                                                                <div class="form-group">
+                                                                    @Html.LabelFor(m => m.DocNumber, new { @class = "control-label" })
+                                                                    @Html.TextBoxFor(m => m.DocNumber, new { @class = "form-control" })
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-sm-3 padding-xs-0">
+                                                                <div class="form-group">
+                                                                    @Html.LabelFor(m => m.FullName, new { @class = "control-label" })
+                                                                    @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3 padding-xs-0">
+                                                                <div class="form-group">
+                                                                    @Html.LabelFor(m => m.ProfileId, new { @class = "control-label" })
+                                                                    @Html.DropDownListFor(m => m.ProfileId, Model.Profiles, new { @class = "form-control selectpicker" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="text-center submit-container" style="padding:20px;">
+                                                        <button type="submit" class="btn btn-success btn-radian-success">Buscar</button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                </div>
+                            </div>
+
+                            @Html.Partial("_usersFreeBiller")
+
+                        </div>
+
+                        <div class="row margin-horizontal-0 text-left buttons-freebiller">
+                            <button id="btnProfile" type="button" class="btn btn-success btn-radian-success">Crear Perfil</button>
+                            <button id="btnUser" type="button" class="btn btn-success" style="border: 2px solid #41D78C; ">Crear Usuario</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="~/Content/js/bootstrap-filestyle.min.js"></script>
+    <script src="~/Content/js/file-validator.js"></script>
+    <script src="~/Content/js/Radian/constants.js"></script>
+    <script src="~/Content/js/Radian/RadianIndex.js"></script>
+    <script src="~/Content/js/FreeBiller/FreeBiller.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            initialValuesSwitchActive('@JsonConvert.SerializeObject(Model.UserContainer.Users)');
+
+            var form = $('#freebiller-users-form');
+            var urlNewUser = "@Url.Action("CreateUser")";
+            var urlNewProfile = "@Url.Action("CreateProfile", "ProfileFreeBiller")";
+
+            $("#btnUser").click(function () {
+                window.location.href = urlNewUser;
+            });
+
+            $("#btnProfile").click(function () {
+                window.location.href = urlNewProfile;
+            });
+
+             $(".next-page").click(function () {
+                $("#Page").val(@Model.Page + 1);
+                form.submit();
+            })
+
+            $(".prev-page").click(function () {
+                $("#Page").val(@Model.Page - 1);
+                form.submit();
+            })
+        });
+
+        function activo(checkboxElem,Id,userID) {
+            if (checkboxElem.checked) {
+                var activo = "true";
+                var confirmMessage = bootboxMessage.CONFIRMATION_MESSAGE_ACTIVE;
+                var operationCancel = () => {
+                    $("#" + Id).prop("checked", false);
+                    hideLoading('#divMain');
+                }
+                var operation = () => {
+                    showLoading('#divMain', 'Guardando', 'Procesando datos, por favor espere.');
+                    $.ajax({
+                        url: '@Url.Action("EditUserActive", "FreeBiller")',
+                        data: "Id=" + userID + "&activo=" + activo,
+                        dataType: "json",
+                        type: "POST",
+                        cache: false,
+                        success: function (data) {
+                            var confirmMessage = data.Message;
+                            var buttons = null;
+                            var clName = (data.Code == 200) ? "cancel-confirmation" : null;
+                            var operationCancelA = () => {
+                                hideLoading('#divMain');
+                                window.location.reload();
+                            };
+                            hideLoading('#divMain');
+                            showConfirmation(confirmMessage, buttons, clName, operationCancelA)
+                        },
+                        error: function (xhr) {
+                            hideLoading('#divMain');
+                            console.log(xhr);
+                        }
+                    });
+                }
+                var buttons = ConfirmExec(operation, null, operationCancel)
+                showConfirmation(confirmMessage, buttons, null, operationCancel);
+            } else {
+                var activo = "false";
+                var confirmMessage = bootboxMessage.CONFIRMATION_MESSAGE_DESACTIVE;
+                var operationCancel = () => {
+                    $("#" + Id).prop("checked", "checked");
+                    hideLoading('#divMain');
+                }
+                var operation = () => {
+                    showLoading('#divMain', 'Guardando', 'Procesando datos, por favor espere.');
+                    $.ajax({
+                       url: '@Url.Action("EditUserActive", "FreeBiller")',
+                        data: "Id=" + userID + "&activo=" + activo,
+                        dataType: "json",
+                        type: "POST",
+                        success: function (data) {
+                            var confirmMessage = data.Message;
+                            var buttons = null;
+                            var clName = (data.Code == 200) ? "cancel-confirmation" : null;
+                            var operationCancelA = () => {
+                                hideLoading('#divMain');
+                                window.location.reload();
+                            };
+                            hideLoading('#divMain');
+                            showConfirmation(confirmMessage, buttons, clName, operationCancelA)
+                        },
+                        error: function (xhr) {
+                            hideLoading('#divMain');
+                            console.log(xhr);
+                        }
+                    });
+                }
+                var buttons = ConfirmExec(operation, null, operationCancel)
+                showConfirmation(confirmMessage, buttons, null, operationCancel);
+            }
+        }
+    </script>
+
+}

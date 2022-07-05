@@ -1,0 +1,217 @@
+﻿@model Gosocket.Dian.Web.Models.ContributorViewModel
+@using Gosocket.Dian.Web.Common;
+@using Gosocket.Dian.Domain.Common
+@using Gosocket.Dian.Infrastructure;
+@{
+    if (Model.ContributorTypeId == (int)ContributorType.Biller)
+    {
+        ViewBag.Title = "Facturador electrónico";
+    }
+    else if (Model.ContributorTypeId == (int)ContributorType.Provider)
+    {
+        ViewBag.Title = "Proveedor tecnológico";
+    }
+    else
+    {
+        ViewBag.Title = "Adquiriente";
+    }
+}
+
+<div class="page-content margin-15">
+    <div class="row margin-horizontal-0">
+        <div class="panel" style="background-color: #ffffff00;">
+            <div class="panel-body padding-top-20">
+                <div class="row margin-horizontal-0">
+                    @if (ConfigurationManager.GetValue("Environment") == "Prod")
+                    {
+                        <div class="dian-alert dian-alert-info">
+                            <i class="fa fa-info-circle" style="margin-right: 15px;"></i>
+                            <p>
+                                <strong>¡Importante!</strong> <br>
+                                Estimado usuario, en el ambiente de producción no se pueden agregar modos de operación.<br />
+                                Haga click <strong><a href="@ConfigurationManager.GetValue("HabUrl")">aquí</a></strong> 
+                                para acceder al ambiente de habilitación.
+                            </p>
+                        </div>
+                    }
+                    <div id="panel-form" data-target="#panel-form" data-toggle="panel-overlay" class="panel panel-bordered-dian margin-bottom-0">
+                        @Html.Partial("_form")
+                        <div class="panel-footer text-left padding-20">
+                            @{
+                                var hasOwnSoftwareEnabled = Model.ContributorOperations.Any(x => x.OperationModeId == (int)OperationMode.Own & x.Software?.AcceptanceStatusSoftwareId == (int)SoftwareStatus.Production);
+                            }
+
+                            @if (!User.IsInAnyRole("Administrador", "Super") && ConfigurationManager.GetValue("Environment") != "Prod")
+                            {
+                                <a href="@Url.Action("ConfigureOperationModes", "Contributor", new { id = Model.Id})" class="btn btn-success btn-radian-success">Configurar modos de operación</a>
+                            }
+
+                            @if ((ConfigurationManager.GetValue("Environment") == "Hab" || ConfigurationManager.GetValue("Environment") == "Local" || ConfigurationManager.GetValue("Environment") == "Test") && Model.AcceptanceStatusId == (int)ContributorStatus.Enabled && !User.IsInRole("Administrador"))
+                            {
+                                <button type="button" data-id="@Model.Id" class="btn btn-secondary btn-sync-to-production">@ConfigurationManager.GetValue("SyncToProdGloss")</button>
+                            }
+
+                            @if (ConfigurationManager.GetValue("Environment") != "Prod" && User.ContributorTypeId() == (int)ContributorType.Biller && hasOwnSoftwareEnabled && Model.AcceptanceStatusId == (int)ContributorStatus.Enabled)
+                            {
+                                <button type="button" data-id="@Model.Id" class="btn btn-secondary btn-gosocket pull-left btn-set-to-provider">Operar como proveedor</button>
+                            }
+                            @if (User.IsInAnyRole("Administrador", "Super"))
+                            {
+                                <a href="@Url.Action("List", "Contributor", new { type = Model.ContributorTypeId })" class="btn btn-secondary">Volver</a>
+                            }
+
+                            @if (User.IsInRole("Administrador") || User.IsInRole("Super"))
+                            {
+                                <a href="@Url.Action("Edit", "Contributor", new { id = Model.Id, type = Model.ContributorTypeId })" class="btn btn-secondary btn-hover-gosocket">Editar</a>
+                            }
+                            @if (ConfigurationManager.GetValue("Environment") == "Prod" && !User.IsInRole("Administrador"))
+                            {
+                                <a href="@Url.Action("OperationModes", "Contributor", new { id = Model.Id})" class="btn btn-secondary">Modos de operación</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                @if ((ConfigurationManager.GetValue("Environment") == "Hab" || ConfigurationManager.GetValue("Environment") == "Local") && User.IsInRole("Administrador") || User.IsInRole("Super"))
+                {
+                    if (Model.ContributorTestSetResults.Any())
+                    {
+                        <div class="row margin-horizontal-0 margin-vertical-30">
+                            @Html.Partial("_testSetResults")
+                        </div>
+                    }
+                }
+
+                @if (Model.Users.Count > 0)
+                {
+                    <div class="row margin-horizontal-0 margin-vertical-30">
+                        @Html.Partial("_users")
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Content/js/contributor/contributor.js?1.0.0"></script>
+
+    <script>
+        $(document).ready(function ($) {
+
+            disableFields();
+
+            if (@Model.OperationModeId === @((int)OperationMode.Own))
+                $('.software').css('display', '');
+
+            if (@Model.OperationModeId === @((int)OperationMode.Provider) ){
+                $('#providers').css('display', '');
+                $('#ProviderId').attr('disabled', 'disabled');
+            }
+
+            $('.btn-set-to-provider').click(function () {
+                ConfirmDialogV2("<strong>¿Está seguro que desea operar como proveedor?</strong>", `
+                        Al realizar esta acción deberá iniciar sesión nuevamente.`,
+                    { confirm: "Aceptar", cancel: "Cancelar" },
+                    () => { setToProvider(@Model.Id) });
+
+                @*bootbox.dialog({
+                    title: "Advertencia",
+                    message: "<div class='media'><div class='media-body'><h4 class='text-thin'><strong>Está seguro que desea operar como proveedor?</strong></h4>Al realizar esta acción deberá iniciar sesión nuevamente.</div></div>",
+                    buttons: {
+                        del: {
+                            label: "Aceptar",
+                            className: "btn-gosocket",
+                            callback: function () {
+                                setToProvider(@Model.Id)
+                            }
+                        },
+                    }
+                });*@
+            });
+
+            $('.btn-sync-to-production').click(function () {
+                ConfirmDialogV2("<strong>¿Está seguro que desea sincronizar contribuyente a producción?</strong>",
+                    { confirm: "Aceptar", cancel: "Cancelar" },
+                    () => { syncToProduction(@Model.Id) });
+
+                @*bootbox.dialog({
+                    title: "Advertencia",
+                    message: "<div class='media'><div class='media-body'><h4 class='text-thin'><strong>Está seguro que desea sincronizar contribuyente a producción?</strong></h4></div></div>",
+                    buttons: {
+                        del: {
+                            label: "Aceptar",
+                            className: "btn-gosocket",
+                            callback: function () {
+                                syncToProduction(@Model.Id)
+                            }
+                        },
+                    }
+                });*@
+            });
+        });
+
+        disableFields = () => {
+            $('#Code').attr('readonly', true);
+            $('#Name').attr('readonly', true);
+            $('#BusinessName').attr('readonly', true);
+            $('#Email').attr('readonly', true);
+            $('#AcceptanceStatusId').attr('disabled', 'disabled');
+            $('#OperationModeId').attr('disabled', 'disabled');
+
+            $('#Software_Name').attr('readonly', true);
+            $('#Software_SoftwareUser').attr('readonly', true);
+            $('#Software_SoftwarePassword').attr('readonly', true);
+            $('#Software_Url').attr('readonly', true);
+        }
+
+        setToProvider = (id) => {
+            showLoading('#panel-form', 'Configuración', 'Procesando datos, por favor espere.');
+            var __RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+            $.ajax({
+                url: "@Url.Action("SetToProvider","Contributor")",
+                method: "Post",
+                data: {
+                    __RequestVerificationToken: __RequestVerificationToken,
+                    id: id
+                },
+                error: function (a, b, c) {
+                    hideLoading('#panel-form');
+                    showNotification('danger', 'fa fa-bolt fa-2x', 'floating', '', b + ': ' + c);
+                },
+                success: function (data) {
+                    if (data.success) {
+                        window.location.href = '@Url.Action("Login", "User")';
+                    }
+                }
+            });
+        }
+
+        syncToProduction = (id) => {
+            showLoading('#panel-form', 'Configuración', 'Enviando a sincronizar datos, por favor espere.');
+            var __RequestVerificationToken = $('input[name="__RequestVerificationToken"]').val();
+            $.ajax({
+                url: "@Url.Action("SyncToProduction", "Contributor")",
+                method: "Post",
+                data: {
+                    __RequestVerificationToken: __RequestVerificationToken,
+                    id: id
+                },
+                error: function (a, b, c) {
+                    hideLoading('#panel-form');
+                    showNotification('danger', 'fa fa-bolt fa-2x', 'floating', '', b + ': ' + c);
+                },
+                success: function (data) {
+                    hideLoading('#panel-form');
+                    if (data.success)
+                        showNotification('success', 'fa fa-check-circle fa-2x', 'floating', 'Aviso', data.message);
+                    if (!data.success)
+                        showNotification('danger', 'fa fa-exclamation-circle fa-2x', 'floating', 'Error', data.message);
+                }
+            });
+        }
+
+    </script>
+}

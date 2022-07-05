@@ -1,0 +1,61 @@
+﻿@model Gosocket.Dian.Web.Models.ContributorViewModel
+@using Gosocket.Dian.Domain.Common
+
+@{
+    /**/
+
+    ViewBag.Title = "Registrar facturador";
+}
+
+<div class="page-content margin-15">
+    <div class="row margin-horizontal-0">
+        <div class="panel">
+            <div class="panel-body padding-top-20">
+                <div class="row margin-horizontal-0">
+                    <div id="panel-form" data-target="#panel-form" data-toggle="panel-overlay" class="panel panel-bordered-dian margin-bottom-0">
+                        @using (Html.BeginForm("Register", "Contributor", FormMethod.Post, new { id = "register-contributor-form" }))
+                        {
+                            @*@Html.AntiForgeryToken()*@
+                            @Html.HiddenFor(x => x.Id)
+                            @Html.HiddenFor(x => x.AcceptanceStatusId)
+                            <div class="panel-body padding-20 padding-bottom-10">
+                                @Html.Partial("_default")
+                                @Html.Partial("_billerObligation")
+                            </div>
+                            if (Model.AcceptanceStatusId == (int)ContributorStatus.Pending)
+                            {
+                                <div class="text-left">
+                                    <button type="button" class="btn btn-primary btn-hover-gosocket btn-save" style="padding: 20px 20px 20px 20px;">Registrar</button>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    @*@Scripts.Render("~/bundles/jqueryval")*@
+
+    <script>
+        $(document).ready(function ($) {
+            $('#Code').attr('readonly', true);
+            $('#Name').attr('readonly', true);
+            $('#BusinessName').attr('readonly', true);
+            $('#Email').attr('readonly', true);
+
+            $('.btn-save').click(function () {
+                ConfirmDialogV2("¿Está seguro que desea registrase como facturador?", `
+                        Al realizar esta acción deberá iniciar sesión nuevamente.`,
+                    { confirm: "Aceptar", cancel: "Cancelar" },
+                    () => {
+                        var form = $('#register-contributor-form');
+                        showLoading('#panel-form', 'Registrando', 'Procesando datos, por favor espere.');
+                        form.submit();
+                    });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,807 @@
+﻿@model Gosocket.Dian.Web.Models.OthersElectronicDocumentsViewModel
+@using Gosocket.Dian.Infrastructure;
+@using Newtonsoft.Json;
+@{
+    var contributorName = (string)ViewBag.ContributorName;
+    var electronicDocumentName = (string)ViewBag.ElectronicDocumentName;
+    var message = (string)ViewBag.Message;
+    var isElectronicPayroll = (bool)ViewBag.IsElectronicPayroll;
+    var isElectronicPayrollNoOfe = (bool)ViewBag.IsElectronicPayrollNoOfe;
+    var dianUrlEventReception = Model.UrlEventReception;
+    var softwareIdPrInitial = Model.SoftwareIdPr;
+}
+
+@section css
+{
+    <style type="text/css">
+        a.disabled {
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+            a.disabled i {
+                color: #ccc !important;
+            }
+
+        .btn-success:focus, .btn-hover-success:active, .btn-hover-success.active, .btn.btn-active-success:active, .btn.btn-active-success.active, .dropdown.open > .btn.btn-active-success, .btn-group.open .dropdown-toggle.btn.btn-active-success {
+            background-color: #348441 !important;
+            border-color: #348441 !important;
+            color: #fff !important;
+        }
+
+        .btn-success:hover, btn-radian-success:hover {
+            background-color: #62C7AB;
+            background: #62C7AB;
+            border-color: #62C7AB;
+            color: #fff;
+        }
+
+        .btnAddOthersDocs {
+            height: 41px !important;
+            width: 22px;
+            font-size: 14pt;
+            color: #fff;
+            background-color: #348441;
+            border-right-width: 0px !important;
+            border-right-style: none;
+            border-top-right-radius: 6px !important;
+            border-bottom-right-radius: 6px !important;
+            border-top-left-radius: 0px !important;
+            border-bottom-left-radius: 0px !important;
+            text-align: center;
+            padding-left: 0px;
+            padding-right: 0px;
+            margin-left: -3px;
+        }
+
+
+        .input-general {
+            background: #fff !important;
+        }
+
+        .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+            cursor: not-allowed;
+            background-color: #eee !important;
+        }
+
+        .btnCloseOtherDocument {
+            color: #fff;
+            background: #348441 !important;
+            background-color: #348441 !important;
+            /*border-radius: 10px !important;*/
+            float: right;
+            cursor: pointer;
+            opacity: 100 !important;
+            padding-left: 5px !important;
+            padding-right: 5px !important;
+            padding-top: 1px !important;
+            padding-bottom: 2px !important;
+            font-weight: normal !important;
+            font-family: auto !important;
+        }
+
+        .prompt-comment .modal-body {
+            width: 80%;
+        }
+
+        .modal-body .close, .modal-header .close {
+            background-color: none !important;
+            /*top: 20px !important;
+            right: -25px !important;*/
+        }
+
+        .divBackTop {
+            padding-top: 15px;
+        }
+
+        .iconBackTop {
+            color: #348441;
+            font-size: 13pt;
+        }
+
+        .btnBackTop {
+            color: #348441;
+            font-size: 14pt;
+            text-decoration: underline;
+        }
+
+        hr {
+            margin-top: 20px !important;
+            margin-bottom: 20px !important;
+            border: 1px !important;
+            border-top: 2px solid #E9E8E8 !important;
+        }
+    </style>
+}
+<div class="page-content margin-15 margin-page-content">
+    @*<div class="row title-container" style="margin-left: 1px;">
+        <p class="title-view">
+            @if (Model.ElectronicDocumentId == 14)
+            {
+                <span style="font-size:22px">Registro y habilitación / Documentos electronicos / Documentos equivalentes / @ViewBag.title</span>
+            }
+            else
+            {
+                @ViewBag.title
+            }
+        </p>
+        <!--<div class="divBackTop">
+        <span class="glyphicon glyphicon-chevron-left iconBackTop"></span>
+        &nbsp;<a id="btnBackTop" href="#!" class="btnBackTop">Volver</a>
+    </div>-->
+    </div>*@
+
+    <div class="row margin-horizontal-0" style="margin-top: 15px;">
+        <div class="tab-base">
+            <div class="tab-content padding-0" style="background:transparent;">
+                <div id="tab-current-country" class="tab-pane fade active in">
+                    <div class="panel" id="panel-wrapper" data-target="#panel-wrapper" style="background:transparent;">
+                        <div class="panel-body" style="padding:0px;">
+                            <div class="row margin-horizontal-0">
+                                <div id="panel-form" data-target="#panel-form" data-toggle="panel-overlay" class="panel panel-bordered-dian margin-bottom-0" style="padding: 20px;">
+
+                                    @using (Html.BeginForm("AddOrUpdateContributor", "OthersElectronicDocuments", FormMethod.Post, new { id = "frmOthersElectronicDocuments" }))
+                                    {
+                                        @Html.Partial("_form")
+                                        if (!ViewBag.softwareActive)
+                                        {
+                                            if (ConfigurationManager.GetValue("Environment") != "Prod")
+                                            {
+                                                <div class="panel-footer">
+                                                    <button id="btnSave" type="button" class="btn btn-secondary btnSave @(Model.ListTable.Any(t=> t.StateSoftware == "En pruebas") ? "disabled" : "")">Asociar</button>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-body" style="background:transparent;">
+                            <p class="sub-title"> Listado de modos de operación asociados</p>
+
+                            <div class="table-responsive">
+                                <table class="simple-table" data-int="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left">Modo de operación</th>
+                                            <th class="text-left">Documento Electrónico</th>
+                                            <th class="text-left">Registro</th>
+                                            <th class="text-left">Estado</th>
+                                            <th class="text-left">Nombre del Software</th>
+                                            <th class="text-left">ID</th>
+                                            <th class="text-left">PIN del SW </th>
+                                            <th class="text-left">URL</th>
+                                            <th class="text-left">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.ListTable != null)
+                                        {
+                                            //List<Gosocket.Dian.Web.Models.IdentificationTypeListViewModel> listDocsTypesLis = (List<Gosocket.Dian.Web.Models.IdentificationTypeListViewModel>)ViewBag.IdentificationTypesList;
+                                            foreach (var item in (List<Gosocket.Dian.Web.Models.OtherDocsElectListViewModel>)Model.ListTable)
+                                            {
+                                                <tr>
+                                                    <td nowrap class="text-left">
+                                                        @item.OperationMode @if (isElectronicPayroll)
+                                                        {<span>- @item.ContributorType</span>}
+                                                    </td>
+                                                    <td nowrap class="text-left">@item.ElectronicDoc</td>
+                                                    <td nowrap class="text-left">@item.CreatedDate.ToString("dd-MM-yyyy")</td>
+                                                    <td class="text-left">@item.StateSoftware</td>
+                                                    <td class="text-left">@item.Software</td>
+                                                    <td class="text-left">@item.SoftwareId</td>
+                                                    <td class="text-left">@item.PinSW</td>
+                                                    <td class="text-left">  @item.Url  </td>
+                                                    <td nowrap class="text-center">
+                                                        @*<a class="delete" href="#" data-contributor-id="@(item.ContributorId)"><i title="Eliminar" class="fa fa-trash fa-1" style="font-size: 22px;color: #348441;"></i></a>*@
+                                                        <a class="btn btn-xs add-tooltip" data-tooltip="tooltip" data-placement="bottom" title="Pruebas de aceptación" href="@Url.Action("Index","OthersElectronicDocAssociated", new { Id =  @item.Id })">
+                                                            <i class="fa fa-eye"></i>
+                                                        </a>
+                                                        @if(ConfigurationManager.GetValue("Environment") != "Prod")
+                                                        {
+                                                            if (isElectronicPayroll || isElectronicPayrollNoOfe || (ViewBag.IsSupportDocument && Model.ContributorIsOfe))
+                                                            {
+                                                                <a onclick="EliminarRegistro(@item.Id)" class="btn btn-xs add-tooltip" data-tooltip="tooltip" data-placement="bottom" title="Eliminar modo de operación"><i class="fa fa-times-circle" style="color:#262944 !important"></i></a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a class="btn btn-xs add-tooltip @(item.StateSoftware != "En pruebas" ? "disabled" : "")" onclick="EliminarRegistro(@item.Id)" data-tooltip="tooltip" data-placement="bottom" title="Eliminar  modo de operación"><i class="fa fa-times-circle" style="color:#262944 !important"></i></a>
+                                                            }
+                                                        }
+                                                        @if (ViewBag.IsEquivalentDocument)
+                                                        {
+                                                            <a class="btn btn-xs add-tooltip" data-tooltip="tooltip" data-placement="bottom" title="Documentos habilitados" onclick="OpenModalShowEquivalentDocumentsEnabled(@item.Id)">
+                                                                <i style="color:#262944 !important" class="fa fa-check-circle"></i>
+                                                            </a>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!--Paginación de la tabla-->
+                            <div class="pull-right table-pagination padding-top-10">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*<div class="modal fade prompt-comment" id="dialogcancelarregistro" tabindex="-1" aria-labelledby="dialogcancelarregistroLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="top: 20px !important; right: -25px !important;">×</button>
+                            <h4 class="modal-title" style="padding-bottom: 1px;border-bottom: 3px solid #62C7AB;font-size: 20px;">&nbsp; Cancelación @(contributorName) de @(electronicDocumentName)</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="bootbox-body">
+                                <Label id="lbldangercancelregister" class="control-label">Describa el motivo de la cancelación del registro</Label>
+                                <textarea class="form-control  input-general fields captureFields" id="txtCancelRegistro" placeholder="Escriba aqui."
+                                          maxlength="300" name="txtCancelRegistro" rows="5" style="height: auto !important;background: white !important;"></textarea>
+                            </div>
+                        </div><div class="modal-footer">
+                            <button id="savecancel-register" name="savecancel-register" type="button" class="btn btn-success btn-radian-success savecancel-register" style="padding: 8px 13px;">Cancelar Registro</button>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+        <div class="modal fade prompt-comment" id="dialogcancelarregistro" tabindex="-1" aria-labelledby="dialogcancelarregistroLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="padding-right: 31px; top: 20px;">×</button>
+                        <h4 class="modal-title" style="padding-bottom: 1px;border-bottom: 3px solid #62C7AB;font-size: 20px;">&nbsp; Eliminación modo de Operación</h4>
+                    </div>
+                    <div class="modal-body" style="width:100%">
+                        <div class="bootbox-body">
+                            <Label id="lbldangercancelregister" class="control-label">Describa el motivo de la eliminación del modo de operación</Label>
+                            <textarea class="form-control  input-general fields captureFields" id="txtCancelRegistro" placeholder="Escriba aqui."
+                                      maxlength="300" name="txtCancelRegistro" rows="5" style="height: auto !important;background: white !important;"></textarea>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="position:relative;width:initial;">
+                        <button type="button" class="btn btn-radian-default" style="display:block; padding: 8px 13px;" data-dismiss="modal">Cancelar</button>
+                        <button id="Btnsavecancel" name="savecancel-register" type="button" class="btn btn-success btn-radian-success savecancel-register" style="padding: 8px 13px;">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade prompt-comment" id="dialog-equivalents-documents-enabled" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="top: 20px;">×</button>
+                <h4 class="sub-title">Documentos equivalentes habilitados</h4>
+            </div>
+            <div class="modal-body" style="width: 100%;">
+                <div class="table-responsive" style="width:inherit">
+                    <table id="equivalents-documents-enabled-table" class="documents-table table table-striped simple-table table-hover align-middle margin-bottom-0" style="margin-bottom: 50px; font-size:14px">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">Documento</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer" style="position:relative">
+                <button type="button" data-dismiss="modal" class="btn btn-success btn-radian-success" style="padding: 8px 13px;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Content/js/Radian/RadianIndex.js"></script>
+
+    <script>
+        let OperationModesAsociatedInElectronicBiller = [];
+        let SoftwaresIds = [];
+
+        @if (!string.IsNullOrWhiteSpace(message))
+        {
+            <text>
+            ErrorDialogV2("¡Notificación!", "@message");
+            </text>
+        }
+
+		function ConfirmExec2(operation, param, operationCancel) {
+			return {
+				del: {
+					label: "Aceptar",
+                    className: "btn-radian-default btn-radian-success",
+					callback: function () {
+						param ? operation(param) : operation();
+						operationClick = false;
+					}
+				},
+				del1: {
+					label: "Cancelar",
+					className: "btn-secundary btn-radian-success",
+					callback: function () {
+						$(' .close').click()
+					}
+				}
+			}
+		}
+        $(document).ready(function ($) {
+            OperationModesAsociatedInElectronicBiller = @Html.Raw(JsonConvert.SerializeObject(Model.OperationModesAsociatedInElectronicBiller));
+            SoftwaresIds = @Html.Raw(JsonConvert.SerializeObject(Model.ListTable.Select(s => s.SoftwareId)));
+
+            if ('@ViewBag.softwareActive' == 'True') {
+                var sms = 'No se puede ' + '@ViewBag.title' + ', ya que tiene uno en estado: "En Proceso"';
+                ErrorDialogV2("¡Notificación!", sms);
+            }
+            $('#PinSW').val('')
+
+            $("#btnBackTop").click(() => {
+                 let url = "@Url.Action("AddParticipants", "OthersElectronicDocuments", new { electronicDocumentId = Model.ElectronicDocumentId })";
+                 if (@Model.ElectronicDocumentId != @((int)Gosocket.Dian.Domain.Common.ElectronicsDocuments.ElectronicPayroll) && @Model.ElectronicDocumentId != @((int)Gosocket.Dian.Domain.Common.ElectronicsDocuments.ElectronicPayrollNoOFE)) {
+                     url = "@Url.Action("ElectronicDocuments", "Document")";
+                 }
+                 window.location.href = url;
+             })
+
+            $('#btnSave').click(function () {
+                if ($('#OperationModeSelectedId').val() != 2) {
+                    $('#ProviderId').append(new Option("", "1"));
+                    $('#ProviderId').val("1")
+                }
+
+                var form = $('#frmOthersElectronicDocuments');
+
+                /*Esta validación aplica cuando el modo de operacion es SP o PT*/
+                if ((SoftwaresIds.find(s => s == $('#SoftwareId').val()) || SoftwaresIds.find(s => s == $('#SoftwareIdPr').val()))
+                    && $('#OperationModeSelectedId').val() != 3 ) {
+                    showConfirmation("<div class='text-center'><img src='/Content/images/icon-warning.svg' width='200'></div><br>El participante ya tiene asociado el software asignado!!!", AlertExec(null));
+                    return;
+                }
+
+                if ($('#OperationModeSelectedId').val() == 1) {
+                    $('#ErrorSoftwareName').hide()
+                    $('#ErrorPinSW').hide()
+
+                    if ($('#SoftwareName').val().trim() == '') {
+                        $('#ErrorSoftwareName').show()
+                    } else {
+                        if ($('#PinSW').val().trim() == '') {
+                            $('#ErrorPinSW').show()
+                        } else {
+                            if (@Model.ElectronicDocumentId == 14 && $('#PinSW').val().trim().length != 5) {
+                                $('#ErrorPinSW-length').show()
+                            } else {
+							    $('#ErrorSoftwareName').hide()
+							    $('#ErrorPinSW').hide()
+                                $('#ErrorPinSW-length').hide()
+                                showLoading('#panel-wrapper', 'Cargando', 'asociando modo de operación, por favor espere.');
+                                form.submit();
+                                hideLoading("#panel-wrapper");
+                            }
+                        }
+
+                    }
+                } else {
+                    $('#ErrorProviderId').hide();
+                    $('#ErrorSoftwareId').hide();
+
+                    if ($('#OperationModeSelectedId').val() == 2) {
+                        if ($('#ProviderId').val() == '') {
+                            $('#ErrorProviderId').show();
+                        } else {
+                            if ($('#SoftwareId').val() == '') {
+                                $('#ErrorSoftwareId').show();
+                            } else {
+                                $('input[name="SoftwareName"]').val($('#SoftwareId option:selected').text());
+                                $('#ErrorProviderId').hide();
+                                $('#ErrorSoftwareId').hide();
+
+                                showLoading('#panel-wrapper', 'Cargando', 'asociando modo de operación, por favor espere.');
+                                form.submit();
+                                hideLoading("#panel-wrapper");
+                            }
+                        }
+                    } else {
+                        if ($('#OperationModeSelectedId').val() == 3)
+                        {
+                            /*Esta validación aplica cuando el modo de operacion es SG*/
+                            if (SoftwaresIds.find(s => s == "@Model.FreeBillerSoftwareId")) {
+                                showConfirmation("El participante ya tiene asociado el software asignado!!!", AlertExec(null));
+                                return;
+                            }
+
+                            showLoading('#panel-wrapper', 'Cargando', 'asociando modo de operación, por favor espere.');
+                            form.submit();
+                            hideLoading("#panel-wrapper");
+                        }
+                    }
+                }
+            });
+
+            $('#ProviderId').change(function () {
+                if ('@ViewBag.softwareActive' == 'False') {
+                    // $('#UrlEventReception').val('');
+                    $('#SoftwareType').val('');
+                    getSoftwares($('#ProviderId').val());
+                }
+            });
+
+            $('#SoftwareId').change(function (e) {
+                var $this = $(this);
+                $('#SoftwareName').val($('#SoftwareId option:selected').text());
+                getDataSoftwareSeleccionado($this.val());
+            });
+
+            $('.delete').click(function () {
+                //alert($(this).data('contributor-id'));
+                $("#txtCancelRegistro").val("");
+                $('#lbldangercancelregister').removeClass("text-danger text-bold");
+                $("#dialogcancelarregistro").modal('show');
+                });
+                if (@Model.ContributorIdType == 2) {
+				$('select[name=OperationModeSelectedId]').val(1);
+                }
+                else {
+				$('select[name=OperationModeSelectedId]').val(0);
+                }
+			$('.selectpicker').selectpicker('refresh');
+            $('#OperationModeSelectedId').change();
+
+            $('#PinSW').blur(function () {
+                $('#ErrorPinSW').hide();
+                $('#ErrorPinSW-length').hide();
+                if (!$(this).val()) {
+                    $('#ErrorPinSW').show();
+                }
+            })
+
+            $('.selectpicker').selectpicker({
+                dropupAuto: false
+            });
+		});//ready
+
+
+
+        function EliminarRegistro(id) {
+            if (@Model.ElectronicDocumentId == 14 || @Model.ElectronicDocumentId == 3) {
+                let confirmMessage = "Estás seguro de eliminar el modo de operación asociado";
+
+                showConfirmation(`¿${confirmMessage}?`, ConfirmExec(
+                    function () {
+                        removeOperationAsociated(id);
+                    }
+                    , "", () => hideLoading('#panel-wrapper')));
+            }
+            else
+            {
+                $("#dialogcancelarregistro").modal('show');
+
+                ("#Btnsavecancel")[0].onclick = null;
+                $("#Btnsavecancel").click(function () {
+                    ElimnarOp(id)
+
+                });
+            }
+		}
+
+                     function ElimnarOp(id)
+                     {
+                         if ($("#txtCancelRegistro").val() == null || $("#txtCancelRegistro").val() == '') {
+                $('#lbldangercancelregister').addClass("text-danger  text-bold");
+                             return;
+                         }
+
+            $("#dialogcancelarregistro").modal('hide');
+
+            if (@Model.ElectronicDocumentId == 13) {
+                removeOperationAsociated(id);
+                return;
+            }
+
+            let confirmMessage = "Desea cancelar el registro del participante @(Html.Raw(contributorName)) de @(Html.Raw(electronicDocumentName))";
+            if (@Model.ElectronicDocumentId == 3) {
+                confirmMessage = "Estás seguro de eliminar el modo de operación asociado";
+            }
+            showConfirmation(`¿${confirmMessage}?`, ConfirmExec(
+                function () {
+                    removeOperationAsociated(id);
+                }
+            , "", () => hideLoading('#panel-wrapper')));
+		}
+
+        function removeOperationAsociated(id) {
+            showLoading('#panel-wrapper', 'Cargando', 'Eliminando el modo de operación solicitado, por favor espere.');
+            $.ajax({
+                url: "@Url.Action("CancelRegister", "OthersElectronicDocAssociated")",
+                type: "POST",
+                    data: { id: id, description: $("#txtCancelRegistro").val() },
+                datatype: "json",
+                success: function (result) {
+                    hideLoading("#panel-wrapper");
+                    if (result != null) {
+
+                        if (result.Code != 200) {
+
+							$('.close').click()
+                            ErrorDialogV2Callback("", result.Message, () => {
+                                var url = window.location.href.split('&');
+                                var ret = url[0] + '&' + url[1] + '&' + url[2] + '&' + url[3];
+                                window.location.href = ret
+                            });
+                            // bootbox.dialog({
+                            //  message: "<div class='media'><div class='media-body' style='padding: 40px 30px 55px 30px !important;  line-height: 100%;text-align: center;'><br><div class='text-center'><img src='/Content/images/icon-warning.svg' width='200'></div><h4 class='sub-title'>" + result.Message + "</h4></div></div>",
+							//	onEscape: () => {
+							//		var url = window.location.href.split('&');
+							//		var ret = url[0] + '&' + url[1] + '&' + url[2] + '&' + url[3];
+							//		window.location.href = ret
+							//	}
+							//});
+							//
+                            return;
+                        }
+
+                        SuccessDialogV2Callback("El modo de operación ha sido eliminado exitosamente", "", () => {
+                            var url = "@Url.Action("Index", "OthersElectronicDocuments")";
+                            if (@Model.ElectronicDocumentId == 14) {
+                                window.location.reload();
+                                return;
+                            }
+                            if (@Model.ElectronicDocumentId == 3) {
+                                window.location.reload();
+                                return;
+                            }
+                            if (@Model.ElectronicDocumentId == 13) {
+                                if (result.ExistOperationModeAsociated) {
+                                    window.location.reload();
+                                } else {
+                                    window.location.href = "@Url.Action("AddParticipants", "OthersElectronicDocuments", new { electronicDocumentId = Model.ElectronicDocumentId })";
+                                }
+                                return;
+                            }
+                            window.location.href = url;
+                        });
+                    }
+                    else {
+                        ErrorDialogV2("¡Notificación!", "No se pudo realizar la Cancelación");
+                    }
+                },
+                complete: function () {
+                    hideLoading("#panel-wrapper");
+                },
+                error: function (result) {
+                    hideLoading("#panel-wrapper");
+                    ErrorDialogV2("¡Notificación!", "Error de conexión al intentar obtener el listado de Software");
+                    console.log(result.status + ' ' + result.statusText);
+                    return false;
+                }
+            });  //ajax
+        }
+
+                     function ReiniciarFormulario() {
+            $('#UrlEventReception').val('@dianUrlEventReception');
+
+            $('#SoftwareType').val(1);
+
+            $('#SoftwareName').val(undefined);
+
+            $('#PinSW').val(undefined);
+
+            $('#ProviderId').val(undefined);
+            $("button[data-id='ProviderId']").attr("title", "Seleccione...");
+            $("button[data-id='ProviderId']").html(`
+                <span class="filter-option pull-left">Seleccione...</span>
+                &nbsp;
+                <span class="fa fa-caret-down"></span>
+            `);
+
+            $("#ulProviderId").find("li.selected").removeClass("selected");
+            $("#ulProviderId").find("li[data-original-index=0]").addClass("selected");
+
+            $('#SoftwareId').val(undefined);
+            $("#SoftwareId").html('<option value="" selected="selected">Seleccione...</option>');
+            $('#ulSoftwareId').html('<li data-original-index="0" class="selected"><a tabindex="0" class=""' +
+                'data-normalized-text="Seleccione..."><span class="text">Seleccione...</span><span class="fa fa-check check-mark"></span></a></li>');
+                     cambiarTextoSelect();
+
+            $('#ContributorName').val("@Model.ContributorName");
+            $('#SoftwareIdPr').val("@softwareIdPrInitial");
+                 }
+
+		$('#OperationModeSelectedId').change(function ()
+        {
+                     const contributorIsOfe = "@Model.ContributorIsOfe".toLowerCase() == "true",
+                         isElectronicSupportDocument = "@Model.ElectronicDocumentIsSupport".toLowerCase() == "true";
+
+                     ReiniciarFormulario();
+
+                     const operationModeAssigned = OperationModesAsociatedInElectronicBiller
+                         .find(t => t.OperationModeId == $('#OperationModeSelectedId').val());
+
+                     if ($('#OperationModeSelectedId').val() == 1) {
+                /*Modo de operación [Software Propio]*/
+                $('#FormPt').fadeOut();
+                $('#FormPropio').fadeIn();
+                $('#DivSoftwareId').fadeIn();
+                $('#DivPin').fadeIn();
+                $('#SoftwareName').removeAttr('disabled');
+				$('#ContributorName').val('@Model.ContributorName');
+                $('#SoftwareName').val('');
+                     }
+            else if ($('#OperationModeSelectedId').val() == 2) {
+                /*Modo de operación [Software Proveedor Tecnológico]*/
+                $('#FormPt').fadeIn();
+                $('#FormPropio').fadeOut();
+				$($(".SoftwareName")[2]).val($('#SoftwareId option:selected').text())
+				$($(".SoftwareName")[0]).val($('#SoftwareId option:selected').text())
+				$($(".SoftwareName")[1]).val($('#SoftwareId option:selected').text())
+            }
+            else
+                if ($('#OperationModeSelectedId').val() == 3) {
+                    /*Modo de operación [Software Solución Gratuita]*/
+                    $('#FormPt').fadeOut();
+                    $('#FormPropio').fadeIn();
+                    $('#ContributorName').val('DIRECCIÓN DE IMPUESTO Y ADUANAS NACIONALES - DIAN');
+                    $('#SoftwareName').val('Solución gratuita');
+                    $('#SoftwareName').attr('disabled', true);
+                    $('#DivSoftwareId').fadeOut();
+                    $('#DivPin').fadeOut();
+                     }
+                else {
+                    $('#FormPt').fadeOut();
+                    $('#FormPropio').fadeOut();
+                     }
+
+                     if (contributorIsOfe && isElectronicSupportDocument) {
+                         if ($('#OperationModeSelectedId').val() == 2) return;
+                         if (!operationModeAssigned) return;
+
+                $('#ContributorName').val(operationModeAssigned.Data.ProviderCompanyName);
+                $('#SoftwareName').val(operationModeAssigned.Data.SoftwareName);
+                $('#SoftwareIdPr').val(operationModeAssigned.Data.SoftwareId);
+                $('#PinSW').val(operationModeAssigned.Data.SoftwarePin);
+
+                $('#ContributorName').attr('disabled', true);
+                $('#SoftwareName').attr('readonly', true);
+                $('#SoftwareIdPr').attr('readonly', true);
+                $('#SoftwareIdPr').removeAttr('disabled');
+                $('#PinSW').attr('readonly', true);
+                     }
+                 })
+
+
+        function getSoftwares(ProviderId){
+
+            $("#SoftwareId").html('<option value="" selected="selected">Seleccione...</option>');
+            $('#ulSoftwareId').html('<li data-original-index="0" class="selected"><a tabindex="0" class=""' +
+                'data-normalized-text="Seleccione..."><span class="text">Seleccione...</span><span class="fa fa-check check-mark"></span></a></li>');
+
+                     cambiarTextoSelect();
+
+            $.ajax({
+                     url: "@Url.Action("GetSoftwaresByContributorId", "OthersElectronicDocuments")",
+                type: "POST",
+                data: { id: ProviderId, electronicDocumentId: @Model.ElectronicDocumentId },
+                datatype: "json",
+                success: function (result) {
+
+                             if (result != null && result.res != null) {
+
+                                 $.each(result.res, function (index, value) {
+                            $('#SoftwareId').append('<option value="' + value.Id + '">' + value.Name + '</option>');
+                            $('#ulSoftwareId').append('<li data-original-index="' + (index + 1) + '"><a tabindex="0" class=""' +
+                                ' data-normalized-text="' + value.Name + '"><span class="text">' + value.Name + '</span>' +
+                                '<span class="fa fa-check check-mark"></span></a></li>');
+                                 });
+                             }
+                             else
+                                 ErrorDialogV2("¡Notificación!", "No se pudo realizar la consulta");
+                         },
+                complete: function () {
+
+                         },
+                error: function (result) {
+                    ErrorDialogV2("¡Notificación!", "Error de conexión al intentar obtener el listado de Software");
+                    console.log(result.status + ' ' + result.statusText);
+                    return false;
+                }
+            });  //ajax
+
+        }
+
+        function getDataSoftwareSeleccionado(SoftwareId){
+
+            $.ajax({
+                url: "@Url.Action("GetDataBySoftwareId", "OthersElectronicDocuments")",
+                type: "POST",
+                data: { SoftwareId: SoftwareId },
+                datatype: "json",
+                success: function (result) {
+                             if (result != null) {
+                        $('#UrlEventReception').val(result.url);
+                        $('#SoftwareType').val(result.SoftwareType);
+                        $('#PinSW').val(result.SoftwarePIN);
+                             }
+                             else
+                                 ErrorDialogV2("¡Notificación!", "No se pudo realizar la consulta");
+                         },
+                complete: function () {
+
+                         },
+                error: function (result) {
+                    ErrorDialogV2("¡Notificación!", "Error de conexión al intentar obtener el listado de Software");
+                    console.log(result.status + ' ' + result.statusText);
+                    return false;
+                }
+            });  //ajax
+        }
+
+                 function cambiarTextoSelect() {
+                     var botones = $(":button");
+                     var boton;
+
+            $.each(botones, function (index1, val1) {
+                         if (val1.attributes != undefined && $(val1).hasClass("selectpicker")) {
+
+                             boton = val1;
+                    $.each(val1.attributes, function (index, value) {
+
+                                 if (value.localName == "data-id" && value.nodeValue == "SoftwareId") {
+
+                                     boton.firstElementChild.textContent = "Seleccione...";
+
+                        }
+                    });
+                }
+            });
+        }
+
+        function OpenModalShowEquivalentDocumentsEnabled(otherDocElecContributor) {
+            var tableContent = $("#equivalents-documents-enabled-table").find("tbody");
+            tableContent.html(`<tr><td colspan="2">No se encontraron documentos equivalentes habilitados</td></tr>`);
+
+            showLoading('#panel-wrapper', 'Cargando', 'Consultando los documentos equivalentes habilitados, por favor espere.');
+            $.ajax({
+                url: `@Url.Action("GetTestSetResultAcepted", "OthersElectronicDocuments")?otherDocElecContributorOperationsId=${otherDocElecContributor}`,
+                type: "GET",
+                datatype: "json",
+                success: function (result) {
+                    hideLoading("#panel-wrapper");
+                    $("#dialog-equivalents-documents-enabled").modal("show");
+                    if (!result) return;
+                    if (result.length <= 0) return;
+                    tableContent.html('');
+                    result.forEach(t => {
+                        tableContent.append(`<tr><td style="text-align: left;">${t.EquivalentElectronicDocumentName}</td><td><label class="label" style="background:green; color: #fff; border-radius:4px;"> ${t.EquivalentElectronicDocumentState}</label></td></tr>`)
+                    });
+
+                },
+                complete: function () {
+                    hideLoading("#panel-wrapper");
+                },
+                error: function (result) {
+                    hideLoading("#panel-wrapper");
+                    ErrorDialogV2("¡Notificación!", "Error de conexión al intentar obtener el listado de documentos equivalentes habilitados");
+                    console.log(result.status + ' ' + result.statusText);
+                    return false;
+                }
+            });
+        }
+
+    </script>
+}

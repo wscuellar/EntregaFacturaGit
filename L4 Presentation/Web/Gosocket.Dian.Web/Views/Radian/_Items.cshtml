@@ -1,0 +1,43 @@
+﻿@model Gosocket.Dian.Web.Models.AdminRadianViewModel
+@using Gosocket.Dian.Web.Utils
+@using Gosocket.Dian.Web.Common
+
+@{ 
+    ViewBag.Title = "Resultados de busqueda";
+}
+<div class="panel" style="background: transparent;">
+    <div class="panel-heading">
+        <h3 class="panel-title no-nifty">@ViewBag.Title</h3>       
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="simple-table documents-table table table-striped table-hover align-middle margin-bottom-0" data-int="0">
+                <thead>
+                    <tr>
+                        <th>NIT</th>
+                        <th class="text-left">Nombre Comercial</th>
+                        <th class="text-left">Razón Social</th>
+                        <th class="text-left">Estado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var RadianContributor in Model.RadianContributors)
+                    {
+                        var textClass = DataUtils.GetProviderStatusStyle(RadianContributor.AcceptanceStatusId);
+                        var isClickableRow = RadianContributor.RadianState == "Cancelado" ? "disabled" : User.IsInAnyRole("Administrador", "Super") ? "clickable-row" : "";
+                        var urlView = User.IsInAnyRole("Administrador", "Super") ? Url.Action("ViewDetails", "Radian", new { id = RadianContributor.Id }) : "";
+                    <tr>
+                        <td class="smallText iffyTip"><a>@RadianContributor.Code</a></td>
+                        <td class="largeText iffyTip text-left"><a>@RadianContributor.BusinessName</a></td>
+                        <td class="largeText iffyTip text-left"><a>@RadianContributor.TradeName</a></td>
+                        <td class="largeText iffyTip text-left"><a>@RadianContributor.RadianState</a></td>
+                        <td class="largeText iffyTip show-details clickable-row" data-href="@urlView"><a class="btn btn-xs add-tooltip" data-tooltip="tooltip" data-placement="bottom" title="Ver detalle"><i class="fa fa-eye"></i></a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
